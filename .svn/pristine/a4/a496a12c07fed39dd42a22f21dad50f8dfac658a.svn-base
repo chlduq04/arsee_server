@@ -1,0 +1,85 @@
+html{
+}
+
+body {
+}
+
+.header {
+	position: fixed;
+	top: 0;
+	height: 70px;
+	margin-bottom: 0px;
+}
+
+.center {
+	width: 90%;
+	left: 0;
+	right: 0;
+	min-height: 500px;
+	margin: 0 auto;
+	margin-top: 150px;
+	margin-bottom: 100px;
+}
+
+.footer {
+	position: fixed;
+	bottom: 0;
+	margin-bottom: 0px;
+	height: 50px;
+}
+
+.main-icon {
+	margin-left: 5px;
+	margin-top: 5px;
+	float: left;
+}
+
+.header-nav {
+	float: right;
+	margin-right: 5px;
+	margin-top: 5px;
+}
+
+.header-nav-now {
+	float: left;
+	padding-right: 0;
+	padding-left: 0;
+	font-size: 16px;
+	font-weight: bold;
+	color: indianred;
+	border-bottom: 2px solid transparent;
+	padding: 10px 15px;
+	margin-right: 15px;
+}
+
+.header-nav-now:FIRST-LETTER {
+	text-transform: uppercase;
+}
+
+.masthead-nav>li>a {
+	padding-right: 0;
+	padding-left: 0;
+	font-size: 16px;
+	font-weight: bold;
+	color: #fff;
+	color: rgba(255, 255, 255, .75);
+	border-bottom: 2px solid transparent;
+}
+
+.masthead-nav>.active>a,.masthead-nav>.active>a:hover,.masthead-nav>.active>a:focus
+	{
+	color: #fff;
+	border-bottom-color: #fff;
+}
+
+.masthead-nav>li {
+	display: inline-block;
+}
+
+.masthead-nav {
+	float: right;
+}
+
+.masthead-nav>li+li {
+	margin-left: 20px;
+}

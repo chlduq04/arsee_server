@@ -1,0 +1,50 @@
+package core;
+
+public class pageInfoBean {
+	private String templete;	
+	private String cssUrl;
+	private String htmlUrl;
+	private String jsUrl;
+	private String imageUrl;
+	
+	
+	public pageInfoBean(){
+		templete = "";
+		cssUrl = "../css/";
+		htmlUrl = "../html/";
+		jsUrl = "../js/";
+		imageUrl = "../image/";
+		
+	}
+
+	public String test(){
+		return "this is test";
+	}
+	
+	
+	public void setCssUrl(String url){
+		this.cssUrl = url;
+	}
+	public void setHtmlUrl(String url){
+		this.htmlUrl = url;	
+	}
+	public void setJsUrl(String url){
+		this.jsUrl = url;	
+	}
+	public void setImageUrl(String url){		
+		this.imageUrl = url;
+	}
+	
+	public String getCssUrl(){
+		return cssUrl;
+	}
+	public String getHtmlUrl(){
+		return htmlUrl;
+	}
+	public String getJsUrl(){
+		return jsUrl;
+	}
+	public String getImageUrl(){
+		return imageUrl;
+	}
+}

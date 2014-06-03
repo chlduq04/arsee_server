@@ -1,0 +1,19 @@
+package core;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
+
+public class PageInfoSession {
+	public boolean findAttr(HttpServletRequest request, PageContext pagecont, String succ_url, String err_url, String index, String check) throws ServletException, IOException{
+		String find = (String)request.getSession().getAttribute(index);
+		if(find != null && find.equals(check)){
+			pagecont.forward(succ_url);
+			return true;
+		}
+		return false;
+	}
+	
+}

@@ -1,0 +1,22 @@
+.pics_main {
+	overflow: hidden;
+	width: 1150px;
+	height: 100%;
+	background-color: #ECFBFF;
+	padding: 25px;
+}
+
+.image_not_found {
+	width: 500px;
+	height: 50px;
+	margin: 0 auto;
+	text-align: center;
+	font-size: 40px;
+	line-height: 50px;
+}
+
+.uploadimages {
+	width: 600px;
+	margin: 0 auto;
+	display: block;
+}

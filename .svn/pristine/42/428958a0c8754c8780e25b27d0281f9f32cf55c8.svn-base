@@ -1,0 +1,24 @@
+.login_main {
+	margin: 0 auto;
+	max-width : 500px;
+}
+
+.btn.btn-default {
+	width: 160px;
+	margin-bottom:5px;
+}
+
+.form-title {
+	border-bottom: 1px solid #e1e1e8;
+}
+
+.form-div {
+	margin-bottom: 70px;
+	padding: 15px;
+	background-color: #f7f7f9;
+	border: 1px solid #e1e1e8;
+}
+
+.div-signup-manager{
+	visibility: hidden;
+}

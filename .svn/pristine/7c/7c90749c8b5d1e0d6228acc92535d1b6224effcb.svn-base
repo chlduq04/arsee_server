@@ -1,0 +1,149 @@
+.main_left {
+	height: 500px;
+	float: left;
+	width: 390px;
+	margin-right: 10px;
+	background-color: #FF9073;
+	border-radius: 15px 0px 0px 15px;
+	background-color: #FF9073;
+}
+
+.main_center {
+	float: left;
+	height: 500px;
+	width: 390px;
+	margin-right: 10px;
+	background-color: #61B7CF;
+}
+
+.main_right {
+	float: left;
+	height: 500px;
+	width: 390px;
+	background-color: #ABF26D;
+	border-radius: 0px 15px 15px 0px;
+}
+
+.ml_clickbox {
+	cursor: pointer;
+	width: 76%;
+	height: 300px;
+	margin: 35px auto;
+	background-color: white;
+	border: 2px outset #FF6840;
+}
+
+.mc_clickbox {
+	cursor: pointer;
+	width: 76%;
+	height: 300px;
+	margin: 35px auto;
+	background-color: white;
+	border: 2px outset #39AECF;
+}
+
+.mr_clickbox {
+	cursor: pointer;
+	width: 76%;
+	height: 300px;
+	margin: 35px auto;
+	background-color: white;
+	border: 2px outset #92F23C;
+}
+
+.ml_clickbt {
+	padding: 0;
+	line-height: 45px;
+	width: 76%;
+	height: 30px;
+	background-color: white;
+	margin: 0 auto;
+	cursor: pointer;
+	display: block;
+	text-align: center;
+	font-family: fantasy;
+	font-size: 35px;
+}
+
+.mc_clickbt {
+	line-height: 45px;
+	width: 76%;
+	height: 30px;
+	background-color: white;
+	margin: 0 auto;
+	cursor: pointer;
+	display: block;
+	text-align: center;
+	font-family: fantasy;
+	font-size: 35px;
+}
+
+.mr_clickbt {
+	line-height: 45px;
+	width: 76%;
+	height: 30px;
+	background-color: white;
+	margin: 0 auto;
+	cursor: pointer;
+	display: block;
+	text-align: center;
+	font-family: fantasy;
+	font-size: 35px;
+}
+
+.mc_insertphonenum {
+	width: 76%;
+	margin: 0 auto;
+	margin-bottom: 10px;
+	display: block;
+	height: 30px;
+	text-align: center;
+	font-family: fantasy;
+}
+
+.mr_insertcompany {
+	width: 37%;
+	margin: 0 auto;
+	margin-bottom: 10px;
+	display: inline;
+	height: 30px;
+	text-align: center;
+	font-family: fantasy;
+	margin-left: 12%;
+}
+
+.mr_insertnumber {
+	width: 37%;
+	margin: 0 auto;
+	margin-bottom: 10px;
+	display: inline;
+	height: 30px;
+	text-align: center;
+	font-family: fantasy;
+}
+
+.mc_insertcompany {
+	width: 37%;
+	margin: 0 auto;
+	margin-bottom: 10px;
+	display: inline;
+	height: 30px;
+	text-align: center;
+	font-family: fantasy;
+	margin-left: 12%;
+}
+
+.mc_insertnumber {
+	width: 37%;
+	margin: 0 auto;
+	margin-bottom: 10px;
+	display: inline;
+	height: 30px;
+	text-align: center;
+	font-family: fantasy;
+}
+
+.index_main {
+	width: 1200px;
+	margin: 0 auto;
+}

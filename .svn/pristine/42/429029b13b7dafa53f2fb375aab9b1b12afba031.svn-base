@@ -1,0 +1,39 @@
+package core;
+
+import java.util.HashMap;
+import java.util.Vector;
+
+public class pageInfoResource {
+	private HashMap<String, pageInfo> PAGES;
+	private int page_count = 0;
+
+	public pageInfoResource(){
+		PAGES = new HashMap<>();
+		setPages();
+	}
+
+	public void setPages(){
+		PAGES.put("main", new pageInfo("main",page_count++));
+		PAGES.put("login", new pageInfo("login",page_count++));
+		PAGES.put("index", new pageInfo("index",page_count++));
+		PAGES.put("qna", new pageInfo("qna",page_count++));
+		PAGES.put("pics", new pageInfo("pics",page_count++));
+		PAGES.put("companys", new pageInfo("companys",page_count++));
+		PAGES.put("error", new pageInfo("error",page_count++));
+		PAGES.put("management", new pageInfo("management",page_count++,"d3.js","d3.layout.js"));
+	}
+	
+	public Vector<String> getPageCss(String pagename){
+		return PAGES.get(pagename).getCssNames();
+	}
+	public Vector<String> getPageJs(String pagename){
+		return PAGES.get(pagename).getJsNames();
+	}
+
+	public boolean nowPage(String url){
+		if(PAGES.containsKey(url)){
+			return true;
+		}
+		return false;
+	}
+}

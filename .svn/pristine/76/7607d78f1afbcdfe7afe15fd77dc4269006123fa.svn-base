@@ -1,0 +1,36 @@
+package core;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class login extends database{
+	public boolean signup( String email, String pass, String key) throws SQLException{
+		initializeDB();
+		int val = makePstmtUpdate("INSERT INTO arsee_manager_datas (`email`, `passwd`) VALUES ('chlduq04@naver.com', '3774');", email, pass);
+		if(val == 0){
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean login_email(String email) throws SQLException{
+		initializeDB();
+		ResultSet rs = makePstmtExecute("SELECT id FROM arsee_manager_datas WHERE email = ?", email);
+		rs.last();
+		if(rs.getRow()>0){
+			return false;
+		}
+		return true;
+	}
+
+	public boolean login_manager( String email, String pass, String key, String name, String phone ) throws SQLException{
+		initializeDB();
+		ResultSet rs = makePstmtExecute("SELECT id FROM arsee_manager_datas WHERE email = ? AND passwd = ? AND name = ? AND phone = ?", email, pass, name, phone);
+		rs.last();
+		if(rs.getRow()>0){
+			return true;
+		}
+		return false;
+	}
+	
+}

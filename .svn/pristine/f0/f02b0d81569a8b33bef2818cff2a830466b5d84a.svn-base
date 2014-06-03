@@ -1,0 +1,33 @@
+<%@page import="java.sql.ResultSet"%>
+<%@page import="core.imagePage"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<jsp:useBean id="imagedata_info" class="core.imagePage" scope="session" />
+<%
+	String pageName = request.getParameter("page");
+	String phoneNum = request.getParameter("phonenum");
+	ResultSet rss = imagedata_info.checkImage(phoneNum);
+%>
+<div class="pics_main">
+<%
+	rss.last();			
+	if(rss.getRow() > 0){
+		rss.beforeFirst();
+		while(rss.next()){
+			%>
+			<img class="uploadimages" src="<%=imagedata_info.getImagePath()%><%=rss.getString(1)%>"/>
+			<%
+		}
+	%>
+	<%
+	}else{
+	%>
+	<div class="image_not_found">No Image Found</div>
+	<%
+	}
+	%>
+</div>
+
+
+
+
+
