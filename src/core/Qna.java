@@ -78,13 +78,16 @@ public class Qna extends Database{
 		return "";
 	}
 	
-	public String insertPeopleData( String company, String number ) throws SQLException {
+	public boolean insertPeopleData(String id, String company, String number, String text, String question1, String question2, String question3, String question4, String question5 ) throws SQLException {
 		initializeDB();
-		ResultSet rs = makePstmtExecute("SELECT id FROM arsee_qna_infos WHERE company = ? AND number=  ?", company, number);
+		ResultSet rs = makePstmtExecute("SELECT * FROM arsee_qna_infos WHERE id = ?", id );
 		while(rs.next()){
-			
+			if(makePstmtUpdate("INSERT INTO arsee_qna_datas ( `info_id`, `text`, `isPoint`, `isText`, `isCheck`, `isRadio`, `question1`, `question2`, `question3`, `question4`, `question5`) VALUES (?, ?, ?, ?, ?, ?, ?)", id, text, rs.getString("isPoint"), rs.getString("isText"), rs.getString("isCheck"), rs.getString("isRadio"), question1, question2, question3, question4, question5) > 0){
+				return true;
+			}
 			break;
 		}
+		return false;
 	}
 	
 	public String getQnaListJson( String company, String number ) throws SQLException{
@@ -97,7 +100,7 @@ public class Qna extends Database{
 			JSONObject jo = new JSONObject();
 			jo.put("text", rs.getObject("text"));
 			if(rs.getString("isCheck").equals("1")){
-				jo.put("type", "checkbox");
+				jo.put("type", "check");
 				jo.put("0", rs.getString("question1"));
 				jo.put("1", rs.getString("question2"));
 				jo.put("2", rs.getString("question3"));
