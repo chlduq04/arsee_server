@@ -85,14 +85,19 @@ public class ParseText extends Database{
 		return result.toJSONString();
 	}
 
-	public String getDepthText(String arsnum, String depth, String parent) throws SQLException{
-		String checkQuery = "SELECT * FROM arsee_ars_infos WHERE number = ? AND depth = ? AND parent = ? order by depth, parent, indexs";
+	public String getDepthText(String arsnum, String depth, String parent, String company) throws SQLException{
+		String checkQuery = "SELECT * FROM arsee_ars_infos WHERE number = ? AND depth = ? AND parent = ? AND company = ? order by depth, parent, indexs";
 		JSONObject result = new JSONObject();
 		initializeDB();
-		ResultSet rss = makePstmtExecute(checkQuery, arsnum, depth, parent);
+		ResultSet rss = makePstmtExecute(checkQuery, arsnum, depth, parent, company);
 		while(rss.next()){
 			result.put(rss.getString("indexs"), rss.getString("text"));
 		}
+		int dpt = Integer.parseInt(depth);
+		if(dpt > 0){
+			makePstmtUpdate("UPDATE arsee_ars_infos SET count = count + 1 WHERE number = ? AND company = ? AND depth = ? AND indexs = ?", arsnum, company, ""+(dpt-1), parent);			
+		}
+		System.out.println(result.toJSONString());
 		return result.toJSONString();
 	}
 
@@ -216,7 +221,7 @@ public class ParseText extends Database{
 		return text;
 	}
 
-	public HashMap<String, String> parseNumbers(String ars,String string,String depth,String parent) throws Exception{
+	public HashMap<String, String> parseNumbers(String ars, String string, String depth, String parent) throws Exception{
 		HashMap<String, String> arsDivide = new HashMap<String, String>();
 		String elses = "";
 		String tempstring = string;
@@ -258,7 +263,7 @@ public class ParseText extends Database{
 	public boolean insertNumber(String ars,String string,String depth,String parent, String company) throws Exception{
 		HashMap<String, String> parsingResult = parseNumbers(ars, string, depth, parent);
 
-		String insertQuery = "INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? );";		
+		String insertQuery = "INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, '1' );";		
 		String checkUpdateQuery = "SELECT text FROM arsee_ars_infos_update WHERE parent = ? AND number = ? AND depth = ? AND indexs = ? AND text = ? AND company = ? AND AmPm = ?";
 		String insertUpdateQueryAm = "INSERT INTO arsee_ars_infos_update ( `text`, `number`, `depth`, `indexs`, `parent`, `count`, `company`, `starttime`, `endtime`, `AmPm` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ? )";
 		String checkStartEndTime = "SELECT starttime, endtime FROM arsee_ars_infos_update WHERE number = ? AND indexs = ? AND depth = ? AND parent = ? AND company = ? AND text = ? AND AmPm = ?";
@@ -375,13 +380,15 @@ public class ParseText extends Database{
 
 									// 그리고 그와 같은 depth를 가지고 index가 다른 시간들을 찾는다.
 									for(int friend = -1 ; friend < 10 ; friend++){								
+										if(friend > 10){
+											friend = 100;
+										}
 										System.out.println("start index depth, parent, index : "+dbdepth+", "+parentRes.getString("parent")+", "+friend);
 										HashMap<String, String> hmap = new HashMap<>();
 										int startchecking = timechecking[0];
 										HashMap<Integer, int[]> checkingDates = new HashMap<>(); 
 
 										// 그리고 시간을 계속해서 조금씩 늘려가면서 그 사이에 depth index가 같은
-										DEBUG_MODE = false;
 										while(startchecking <= timechecking[1]){
 											String test2 = "SELECT * FROM arsee_ars_infos_update WHERE parent = ? AND depth = ? AND company = ? AND indexs = ? AND number = ? AND (starttime >= ? OR endtime <= ?) order by count desc";
 											ResultSet checkQuery = makePstmtExecute(test2, parentRes.getString("parent"), ""+dbdepth, company, ""+friend, ars, culSecondToTime(startchecking - 3600), culSecondToTime(startchecking));
@@ -409,7 +416,6 @@ public class ParseText extends Database{
 												startchecking = timechecking[1];
 											}
 										}
-										DEBUG_MODE = true;
 										// 그런데 만약 map이 비지 않았다면 업데이트 할 정보가 모인 것이다.
 										if(!checkingDates.isEmpty()){
 											int maxcount = 0;
@@ -449,6 +455,7 @@ public class ParseText extends Database{
 											ResultSet findAndInsert = makePstmtExecute("SELECT * FROM arsee_ars_infos_update WHERE id = ?", hmap.get(keys));
 											findAndInsert.next();
 											makePstmtUpdate(insertQuery, findAndInsert.getString("text"), ars, findAndInsert.getString("depth"), keys, findAndInsert.getString("parent"), company, culSecondToTime(timechecking[0]), culSecondToTime(timechecking[1]));								
+											checkFrequency(ars, findAndInsert.getString("text"), findAndInsert.getString("depth"), findAndInsert.getString("parent"), keys, company);
 											makePstmtUpdate("DELETE FROM arsee_ars_infos_update WHERE id = ?", hmap.get(keys));
 											// 최고값을 업데이트 한뒤, 임시 테이블에서 지운다.
 										}
@@ -502,6 +509,37 @@ public class ParseText extends Database{
 		}
 	}
 
+	public boolean checkFrequency(String arsnum, String text, String dpt, String parent, String index, String company) throws SQLException{
+		System.out.println("frequency");
+		KeywordList kl = keTest(text);
+		for( int i = 0; i < kl.size(); i++ ) {
+			Keyword kwrd = kl.get(i);
+			//			System.out.println(kwrd.getTag()+" : "+kwrd.getString());
+			if( kwrd.getTag() == "NNG" && returnIndex(kwrd.getString())==-1){
+				//System.out.println(kwrd.getTag());
+
+				String checkTimeQuery = "SELECT id FROM arsee_ars_infos WHERE number = ? AND company = ? AND parent = ? AND depth = ? AND text = ? AND indexs = ?";
+				String checkQuery = "SELECT id FROM arsee_kwrds WHERE key_word = ? and number = ? and depth = ? and parent = ? and indexs = ? and company = ?";
+				String updateCount = "UPDATE arsee_kwrds SET count = count + 1 WHERE key_word = ? and depth =? and parent = ? and indexs = ? and company = ?";
+				String insertQuery = "INSERT INTO arsee_kwrds (`key_word`, `number`, `depth`, `parent`, `indexs`, `count`, `company`, `ars_info_id`) VALUES (?, ?, ?, ?, ? ,?, ?, ?);";
+				initializeDB();
+				ResultSet rs = makePstmtExecute(checkQuery, kwrd.getString(), arsnum, dpt, parent, index, company);
+				rs.last();
+				if(rs.getRow()>0){
+					makePstmtUpdate(updateCount, kwrd.getString(), dpt, parent, index, company);
+				}else{
+					ResultSet rst = makePstmtExecute(checkTimeQuery, arsnum, company, parent, dpt, text ,index);
+					rst.last();
+					if(rst.getRow()>0){
+						rst.beforeFirst();
+						rst.next();
+						makePstmtUpdate(insertQuery, kwrd.getString(), arsnum, dpt, parent, index, "1", company, rst.getString("id"));											
+					}
+				}
+			}
+		}	
+		return false;
+	}
 
 	public boolean checkFrequency(String arsnum, String text, String dpt, String parent, String index, String company, boolean insert) throws SQLException{
 		System.out.println("frequency");
@@ -517,7 +555,7 @@ public class ParseText extends Database{
 					String updateCount = "UPDATE arsee_kwrds SET count = count + 1 WHERE key_word = ? and depth =? and parent = ? and indexs = ? and company = ?";
 					String insertQuery = "INSERT INTO arsee_kwrds (`key_word`, `number`, `depth`, `parent`, `indexs`, `count`, `company`, `ars_info_id`) VALUES (?, ?, ?, ?, ? ,?, ?, ?);";
 					initializeDB();
-					ResultSet rs = makePstmtExecute(checkQuery, kwrd.getString(),arsnum,dpt,parent, index, company);
+					ResultSet rs = makePstmtExecute(checkQuery, kwrd.getString(), arsnum, dpt, parent, index, company);
 					rs.last();
 					if(rs.getRow()>0){
 						makePstmtUpdate(updateCount, kwrd.getString(), dpt, parent, index, company);
@@ -526,6 +564,7 @@ public class ParseText extends Database{
 						rst.last();
 						if(rst.getRow()>0){
 							rst.beforeFirst();
+							rst.next();
 							makePstmtUpdate(insertQuery, kwrd.getString(), arsnum, dpt, parent, index, "1", company, rst.getString("id"));											
 						}
 					}
@@ -535,29 +574,34 @@ public class ParseText extends Database{
 		return false;
 	}
 
-	public String checkUpdateByNumber(String arsnum) throws SQLException{
-		String checkQuery = "SELECT * FROM  arsee_table_update_check WHERE number = ? order by depth , parent, indexs";
+	public String checkUpdateByNumber(String arsnum, String company) throws SQLException{
+		String checkQuery = "SELECT * FROM arsee_table_update_check WHERE number = ? AND company = ?";
 		JSONObject result = new JSONObject();
 		initializeDB();
-		ResultSet rss = makePstmtExecute(checkQuery, arsnum);
+		ResultSet rss = makePstmtExecute(checkQuery, arsnum, company);
 		while(rss.next()){
 			result.put("result", rss.getString("updates"));
+			break;
 		}
 		return result.toJSONString();
 	}
 
-	public String checkMaxKwrdByCount(String arsnum, String kwrd) throws SQLException{
-		String checkQuery = "SELECT * FROM arsee_kwrds WHERE number = ? AND key_word = ? order by depth, parent, indexs";
+	public String checkMaxKwrdByCount(String arsnum, String company, String kwrd) throws SQLException{
+		String checkQuery = "SELECT * FROM arsee_kwrds WHERE number = ? AND key_word = ? AND company = ? order by depth, parent, indexs";
 		JSONObject result = new JSONObject();
 		initializeDB();
-		ResultSet rss = makePstmtExecute(checkQuery, arsnum, kwrd);
+		ResultSet rss = makePstmtExecute(checkQuery, arsnum, kwrd, company);
 		while(rss.next()){
-			result.put("depth-index",rss.getString("depth") +"-"+ rss.getString("indexs"));
+			result.put("depth",rss.getString("depth"));
+			result.put("index",rss.getString("indexs"));
+			result.put("parent",rss.getString("parent"));
+			break;
 		}
+		System.out.println(result.toJSONString());
 		return result.toJSONString();
 	}
 
-	public String checkMaxKwrdByCount(String arsnum, String kwrd, String depth) throws SQLException{
+/*	public String checkMaxKwrdByCount(String arsnum, String kwrd, String depth) throws SQLException{
 		String checkQuery = "SELECT * FROM arsee_kwrds WHERE number = ? AND depth = ? AND key_word = ? order by depth, parent, indexs";
 		JSONObject result = new JSONObject();
 		initializeDB();
@@ -567,7 +611,7 @@ public class ParseText extends Database{
 		}
 		return result.toJSONString();
 	}
-
+*/
 	public String checkMaxKwrdBy(){
 		return "";
 	}

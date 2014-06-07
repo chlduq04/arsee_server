@@ -23,8 +23,7 @@ if(func.equals("add")){
 	String text = request.getParameter("n_text");
 	String starttime = request.getParameter("n_start");
 	String endtime = request.getParameter("n_end");
-	String index = request.getParameter("n_indexs");
-	out.println(manage.modifyDB(id, text, starttime, endtime, index));	
+	out.println(manage.modifyDB(id, text, starttime, endtime));	
 }else if(func.equals("parse")){
 	String starttime = request.getParameter("t_min");
 	String endtime = request.getParameter("t_max");

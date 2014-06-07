@@ -53,6 +53,7 @@
 		<jsp:include page="footer.jsp"></jsp:include>
 	</div>
 	<script type="text/javascript" src="<%=page_info.getJsUrl()%>jquery.js"></script>
+	
 <%
 	includes = page_resource.getPageJs(nowPage);
 	for (int i = 0; i < includes.size(); i++) {

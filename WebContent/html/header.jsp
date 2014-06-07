@@ -9,9 +9,8 @@
 	<img class="main-icon" src="http://placehold.it/80x60">
 	<div class="header-nav">
 		<ul class="nav masthead-nav">
-			<li class="active"><a href="#">Home</a></li>
-			<li>
-			
+			<li class="active"><a href="<%=url_manage.getToUrl("page=main")%>">Home</a></li>
+			<li>			
 			<%if(session.getAttribute("email") != null){%>
 				<a href="<%=url_manage.getToUrl("page=logout")%>">Logout</a>
 			<%}else{%>

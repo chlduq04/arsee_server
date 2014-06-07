@@ -18,6 +18,7 @@ if(nowPageParent == null || nowPageParent == ""){
 
 
 String nowDate = request.getParameter("get_text_by_number");
+String nowDataCompany = request.getParameter("parsing_company");
 String nowDateParent = request.getParameter("get_text_by_number_parent");
 String nowDateDepth = "0";
 if(nowDateParent == null || nowDateParent == ""){
@@ -27,10 +28,12 @@ if(nowDateParent == null || nowDateParent == ""){
 }
 
 
-String nowUpdateArs = request.getParameter("now_ars_update");
+String nowUpdateArs = request.getParameter("now_ars_update_company");
+String nowUpdateArsNum = request.getParameter("now_ars_update_number");
 
 String arsKwrd = request.getParameter("find_ars_table");
 String arsKwrdVar = request.getParameter("find_ars_table_variable");
+String arsCompany = request.getParameter("find_ars_company");
 
 boolean checkupdate = false;
 String depthData;
@@ -44,7 +47,7 @@ if(postPage != null){
 
 if(nowDate != null && nowDate != ""){
 	if(nowDateDepth != null && nowDateDepth!= ""){
-		depthData = text_parsing.getDepthText(nowDate, nowDateDepth, nowDateParent);
+		depthData = text_parsing.getDepthText(nowDate, nowDateDepth, nowDateParent, nowDataCompany);
 		%>
 		<div>depthData : <%=depthData %></div>
 		<%	
@@ -56,7 +59,7 @@ if(nowDate != null && nowDate != ""){
 	}
 }
 if(nowUpdateArs != null){
-	String nowupdate = text_parsing.checkUpdateByNumber(nowUpdateArs);
+	String nowupdate = text_parsing.checkUpdateByNumber(nowUpdateArsNum,nowUpdateArs);
 	%>
 	<div>nowUpdate : <%=nowupdate %></div>
 	<%	
@@ -64,7 +67,7 @@ if(nowUpdateArs != null){
 }
 
 if(arsKwrd != null && arsKwrdVar != null){
-	String nowKwrd = text_parsing.checkMaxKwrdByCount(arsKwrd, arsKwrdVar);	
+	String nowKwrd = text_parsing.checkMaxKwrdByCount(arsKwrd,arsCompany, arsKwrdVar);	
 	%>
 	<div>가장 가까운 번호 : <%=nowKwrd%></div>
 	<%	
@@ -79,9 +82,9 @@ out.println(checkupdate);
 <div style="border:1px solid black;padding:5px;">
 	<form method="POST" action="textParsing.jsp">
 		<label>텍스트 : <input type="text" value="" name="parsing_text"></input></label><br />
-		<label>ARS 번호 : <input type="text" value="0000" name="parsing_number"></input></label><br />
+		<label>ARS 번호 : <input type="text" value="114" name="parsing_number"></input></label><br />
 		<label>ARS 이전 번호 : <input type="text" value="" name="parsing_parent"></input></label><br />
-		<label>통신사 : <input type="text" value="skt" name="parsing_company"></input></label><br />
+		<label>통신사 : <input type="text" value="kt" name="parsing_company"></input></label><br />
 		<input type="submit"></input>
 	</form>
 </div>
@@ -89,9 +92,9 @@ out.println(checkupdate);
 <div>불러오기</div>
 <div style="border:1px solid black;padding:5px;">
 	<form method="POST" action="textParsing.jsp">
-		<label>ARS 번호 : <input type="text" value="0000" name="get_text_by_number"></input></label><br />
-		<label>ARS 깊이 : <input type="text" value="0" name="get_text_by_number_depth"></input></label><br />
+		<label>ARS 번호 : <input type="text" value="114" name="get_text_by_number"></input></label><br />
 		<label>ARS 이전 번호 : <input type="text" value="" name="get_text_by_number_parent"></input></label><br />
+		<label>통신사 : <input type="text" value="olleh" name="parsing_company"></label>
 		<input type="submit"></input>
 	</form>
 </div>
@@ -100,7 +103,8 @@ out.println(checkupdate);
 <div>상태 확인</div>
 <div style="border:1px solid black;padding:5px;">
 	<form method="POST" action="textParsing.jsp">
-		<input type="text" value="0000" name="now_ars_update"></input>
+		<input type="text" value="olleh" name="now_ars_update_company"></input>
+		<input type="text" value="114" name="now_ars_update_number"></input>
 		<input type="submit"></input>
 	</form>
 </div>
@@ -110,6 +114,7 @@ out.println(checkupdate);
 <div style="border:1px solid black;padding:5px;">
 	<form method="POST" action="textParsing.jsp">
 		<label>ARS 번호 : <input type="text" value="0000" name="find_ars_table"></input></label><br />
+		<label>ARS 회사 : <input type="text" value="olleh" name="find_ars_company"></input></label><br />
 		<label>찾고자 하는 단어 : <input type="text" value="어린이" name="find_ars_table_variable"></input></label><br />
 		<input type="submit"></input>
 	</form>

@@ -14,7 +14,7 @@ public class MakeJsonDateTree {
 	public int indexCount = 0;
 	public int checkIndex[] = new int[15];
 	
-	public MakeJsonDateTree( String text, String depth, String parent, String id, String indexs, String company, String starttime, String endtime, String count ){
+	public MakeJsonDateTree( String text, String depth, String parent, String id, String indexs, String company, String starttime, String endtime ){
 		obj.put("name", text);
 		obj.put("depth", depth);
 		obj.put("id", id);
@@ -23,11 +23,10 @@ public class MakeJsonDateTree {
 		obj.put("company", company);		
 		obj.put("starttime", starttime);		
 		obj.put("endtime", endtime);		
-		obj.put("count", count);
 	}
 	
-	public void makeChild( String text, String depth, String parent, String id, String indexs, String company, String starttime, String endtime, String count ){
-		children.put(Integer.parseInt(indexs), new MakeJsonDateTree(text, depth, parent, id, indexs, company, starttime, endtime, count));
+	public void makeChild( String text, String depth, String parent, String id, String indexs, String company, String starttime, String endtime ){
+		children.put(Integer.parseInt(indexs), new MakeJsonDateTree(text, depth, parent, id, indexs, company, starttime, endtime));
 		checkIndex[indexCount++] = Integer.parseInt(indexs);
 	}
 
