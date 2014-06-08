@@ -1,5 +1,5 @@
 .management_main {
-	overflow: hidden;
+	overflow:hidden;
 	width: 100%;
 	height: 100%;
 }
@@ -12,13 +12,11 @@
 }
 
 .node text {
-	font-family: TitilliumText800wt !important;
 	font-size: 11px;
-	font-weight: 700;
 }
 
 path.link {
-	fill: none;
+	fill:none;
 	stroke-linecap: round;
 	/*
 	fill: none;
@@ -100,49 +98,52 @@ path.link {
 	padding-right: 10px;
 }
 
-.form-horizontal.time-input {
-	overflow: hidden;
-	margin-top: 20px;
+.form-horizontal.time-input{
+	overflow:hidden;
+	margin-top:20px;
 }
+
+
+
+
+
 
 .node {
-	cursor: pointer;
-}
+    cursor: pointer;
+  }
 
-.overlay {
-	
-}
-
-.node circle {
-	fill: #fff;
-	stroke: steelblue;
-	stroke-width: 1.5px;
-}
-
-.node text {
-	font-size: 10px;
-	font-family: sans-serif;
-}
-
-.link {
-	/*
+  .overlay{
+  }
+   
+  .node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+  }
+   
+  .node text {
+    font-size:10px; 
+    font-family:sans-serif;
+  }
+   
+  .link {
+  	/*
     fill: none;
     stroke: #ccc;
     stroke-width: 1.5px;
 	*/
-	
-}
+  }
 
-.templink {
-	fill: none;
-	stroke: red;
-	stroke-width: 3px;
-}
+  .templink {
+    fill: none;
+    stroke: red;
+    stroke-width: 3px;
+  }
 
-.ghostCircle.show {
-	display: block;
-}
+  .ghostCircle.show{
+      display:block;
+  }
 
-.ghostCircle,.activeDrag .ghostCircle {
-	display: none;
-}
+  .ghostCircle, .activeDrag .ghostCircle{
+       display: none;
+  }

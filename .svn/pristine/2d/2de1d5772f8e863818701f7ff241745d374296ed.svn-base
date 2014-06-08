@@ -1,9 +1,5 @@
-@font-face {
-	font-family: TitilliumText800wt;
-	src: url("../font/TitilliumText800wt.otf") format("opentype");
-}
-
 html {
+	
 }
 
 #body {
