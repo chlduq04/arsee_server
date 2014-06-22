@@ -17,7 +17,7 @@ import org.snu.ids.ha.ma.MorphemeAnalyzer;
 import org.snu.ids.ha.ma.Sentence;
 import org.snu.ids.ha.util.Timer;
 
-public class Management extends Database{
+public class ManagementHoliday extends Database{
 	String string;
 	MakeJsonData mjd = null;
 
@@ -28,12 +28,12 @@ public class Management extends Database{
 
 	public ResultSet findByNumber(String company, String number) throws SQLException{
 		initializeDB();
-		return makePstmtExecute("SELECT * FROM arsee_ars_infos WHERE company = ? AND number = ?", company, number);
+		return makePstmtExecute("SELECT * FROM arsee_ars_infos_holiday WHERE company = ? AND number = ?", company, number);
 	}
 
 	public boolean isEmpty(String company, String number )throws SQLException{
 		initializeDB();
-		ResultSet rs = makePstmtExecute("SELECT id FROM arsee_ars_infos WHERE company = ? AND number = ?", company, number);
+		ResultSet rs = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company = ? AND number = ?", company, number);
 		rs.last();
 		if(rs.getRow()>0){
 			return false;			
@@ -52,7 +52,7 @@ public class Management extends Database{
 	public String tagsFromDatabase(String id) throws SQLException{
 		initializeDB();
 		JSONObject result = new JSONObject();
-		ResultSet res = makePstmtExecute("SELECT * FROM arsee_ars_other_infos WHERE name_id = ?", id);
+		ResultSet res = makePstmtExecute("SELECT * FROM arsee_ars_other_infos_holiday WHERE name_id = ?", id);
 		while(res.next()){
 			result.put(res.getString("id"), res.getString("text"));
 		}
@@ -65,7 +65,7 @@ public class Management extends Database{
 		Object obj = parser.parse(new_val);
 		JSONArray array = (JSONArray)obj;
         for(int i=0 ; i < array.size() ; i++){
-        	makePstmtUpdate("INSERT INTO arsee_ars_other_infos (`name_id`, `text`) VALUES (?, ?)", id, array.get(i).toString());
+        	makePstmtUpdate("INSERT INTO arsee_ars_other_infos_holiday (`name_id`, `text`) VALUES (?, ?)", id, array.get(i).toString());
         }
         
 		parser=new JSONParser();
@@ -73,7 +73,7 @@ public class Management extends Database{
         array = (JSONArray)obj;
         for(int i=0;i<array.size();i++){
         	JSONObject json = (JSONObject)array.get(i);
-        	makePstmtUpdate("UPDATE arsee_ars_other_infos SET text = ? WHERE id = ?", json.get("text").toString(), json.get("id").toString());
+        	makePstmtUpdate("UPDATE arsee_ars_other_infos_holiday SET text = ? WHERE id = ?", json.get("text").toString(), json.get("id").toString());
         }
 		return "수정 성공";
 	}
@@ -85,7 +85,7 @@ public class Management extends Database{
         JSONArray array = (JSONArray)obj;
         for(int i=0;i<array.size();i++){
         	JSONObject json = (JSONObject)array.get(i);
-        	makePstmtUpdate("UPDATE arsee_ars_infos SET depth = ?, parent = ? WHERE id = ?", json.get("depth").toString(), json.get("parent").toString(), json.get("id").toString());
+        	makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET depth = ?, parent = ? WHERE id = ?", json.get("depth").toString(), json.get("parent").toString(), json.get("id").toString());
         }
         return array.toJSONString();
 	}
@@ -93,7 +93,7 @@ public class Management extends Database{
 	public String findJson(String number, String company, String starttime, String endtime) throws SQLException{
 		mjd = MakeJsonData.getInstance(company);
 		initializeDB();
-		ResultSet rs = makePstmtExecute("SELECT * FROM arsee_ars_infos WHERE number = ? AND company = ? AND starttime >= ? AND endtime <= ? order by depth , parent, indexs", number, company, starttime, endtime);
+		ResultSet rs = makePstmtExecute("SELECT * FROM arsee_ars_infos_holiday WHERE number = ? AND company = ? AND starttime >= ? AND endtime <= ? order by depth , parent, indexs", number, company, starttime, endtime);
 		mjd.initParsingData(company);
 		while(rs.next()){
 //			if(Integer.parseInt(rs.getString("indexs")) >= 0 && Integer.parseInt(rs.getString("indexs")) != 100){
@@ -121,7 +121,7 @@ public class Management extends Database{
 
 	public int findTopNavi( String number, String company) throws SQLException{
 		initializeDB();
-		ResultSet rs = makePstmtExecute("SELECT MAX(depth) as depth FROM arsee_ars_infos WHERE number = ? AND company = ?", number, company);		
+		ResultSet rs = makePstmtExecute("SELECT MAX(depth) as depth FROM arsee_ars_infos_holiday WHERE number = ? AND company = ?", number, company);		
 		rs.last();
 		if(rs.getRow() > 0){
 			rs.beforeFirst();
@@ -133,7 +133,7 @@ public class Management extends Database{
 
 	public String resultDB( String number, String company, String depth) throws SQLException{
 		initializeDB();		
-		ResultSet rs = makePstmtExecute("SELECT text FROM arsee_ars_infos WHERE number = ? AND company = ? AND dpeth = ?", number, company, depth);
+		ResultSet rs = makePstmtExecute("SELECT text FROM arsee_ars_infos_holiday WHERE number = ? AND company = ? AND dpeth = ?", number, company, depth);
 		rs.last();
 		if(rs.getRow()>0){
 			rs.beforeFirst();
@@ -150,23 +150,23 @@ public class Management extends Database{
 		int i=0;
 		for( ; i<10 ; i++){
 			if(parsingResult.containsKey(""+i)){
-				ResultSet st = makePstmtExecute("SELECT id FROM arsee_ars_infos WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", company, parent+parent_index, ""+i, starttime, endtime, depth);
+				ResultSet st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", company, parent+parent_index, ""+i, starttime, endtime, depth);
 				st.last();
 				if(st.getRow() > 0){
 					makePstmtUpdate("UPDATE SET text = ?, count = 1 WHERE indexs = ? AND starttime = ? AND endtime = ? AND company = ? AND number = ? AND depth = ? AND parent = ? ", parsingResult.get(""+i), ""+i, starttime, endtime, company, number, depth, parent+parent_index);
 				}else{
-					makePstmtUpdate("INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `normal` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", parsingResult.get(""+i), number, depth, ""+i, parent+parent_index, company, starttime, endtime, "1", "1");										
+					makePstmtUpdate("INSERT INTO arsee_ars_infos_holiday ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `normal` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", parsingResult.get(""+i), number, depth, ""+i, parent+parent_index, company, starttime, endtime, "1", "1");										
 				}
 			}
 		}
 		i=100;
 		if(parsingResult.containsKey(""+i)){
-			ResultSet st = makePstmtExecute("SELECT id FROM arsee_ars_infos WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", company, parent+parent_index, ""+i, starttime, endtime, depth);
+			ResultSet st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", company, parent+parent_index, ""+i, starttime, endtime, depth);
 			st.last();
 			if(st.getRow() > 0){
 				makePstmtUpdate("UPDATE SET text = ?, count = 1 WHERE indexs = ? AND starttime = ? AND endtime = ? AND company = ? AND number = ? AND depth = ? AND parent = ? ", parsingResult.get(""+i), ""+i, starttime, endtime, company, number, depth, parent+parent_index);
 			}else{
-				makePstmtUpdate("INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `normal` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", parsingResult.get(""+i), number, depth, ""+i, parent+parent_index, company, starttime, endtime, "1", "1");										
+				makePstmtUpdate("INSERT INTO arsee_ars_infos_holiday ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `normal` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", parsingResult.get(""+i), number, depth, ""+i, parent+parent_index, company, starttime, endtime, "1", "1");										
 			}
 		}
 	
@@ -177,34 +177,34 @@ public class Management extends Database{
 		initializeDB();
 		ResultSet st;
 		if(type.equals(ARS_DATA_TYPE_INFO)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_INFO+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_INFO+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
 		}else if(type.equals(ARS_DATA_TYPE_ERROR)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_ERROR+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_ERROR+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
 		}else if(type.equals(ARS_DATA_TYPE_SHARP)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_SHARP+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_SHARP+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
 		}else if(type.equals(ARS_DATA_TYPE_STAR)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_STAR+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_STAR+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
 		}else if(type.equals(ARS_DATA_TYPE_NORMAL)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
 		}else{
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ?", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ?", company, parent+parent_index, index, starttime, endtime, depth);
 		}
 		st.last();
 		if(st.getRow()!=0){
 			return "이미 같은 위치에 데이터가 있습니다.";
 		}
 		if(type.equals(ARS_DATA_TYPE_INFO)){
-			makePstmtUpdate("INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `info` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");							
+			makePstmtUpdate("INSERT INTO arsee_ars_infos_holiday ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `info` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");							
 		}else if(type.equals(ARS_DATA_TYPE_ERROR)){
-			makePstmtUpdate("INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `error` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");							
+			makePstmtUpdate("INSERT INTO arsee_ars_infos_holiday ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `error` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");							
 		}else if(type.equals(ARS_DATA_TYPE_SHARP)){
-			makePstmtUpdate("INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `sharp` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");										
+			makePstmtUpdate("INSERT INTO arsee_ars_infos_holiday ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `sharp` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");										
 		}else if(type.equals(ARS_DATA_TYPE_STAR)){
-			makePstmtUpdate("INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `star` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");										
+			makePstmtUpdate("INSERT INTO arsee_ars_infos_holiday ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `star` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");										
 		}else if(type.equals(ARS_DATA_TYPE_NORMAL)){
-			makePstmtUpdate("INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `normal` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");										
+			makePstmtUpdate("INSERT INTO arsee_ars_infos_holiday ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `normal` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1", "1");										
 		}else{
-			makePstmtUpdate("INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1" );										
+			makePstmtUpdate("INSERT INTO arsee_ars_infos_holiday ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )", text, number, depth, index, parent+parent_index, company, starttime, endtime, "1" );										
 		}
 		return "입력 성공";
 	}
@@ -216,7 +216,7 @@ public class Management extends Database{
         JSONArray array = (JSONArray)obj;
         for(int i=0;i<array.size();i++){
         	JSONObject json = (JSONObject)array.get(i);
-    		makePstmtUpdate("DELETE FROM arsee_ars_infos WHERE id = ?", json.get("id").toString());							
+    		makePstmtUpdate("DELETE FROM arsee_ars_infos_holiday WHERE id = ?", json.get("id").toString());							
         }
 		return "삭제성공";
 	}
@@ -225,17 +225,17 @@ public class Management extends Database{
 		initializeDB();
 		int count = 0;
 		if(type.equals(ARS_DATA_TYPE_INFO)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = '1', "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = '1', "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}else if(type.equals(ARS_DATA_TYPE_ERROR)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = '1', "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = '1', "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}else if(type.equals(ARS_DATA_TYPE_SHARP)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = '1', "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);					
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = '1', "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);					
 		}else if(type.equals(ARS_DATA_TYPE_STAR)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = '1' WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = '1' WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}else if(type.equals(ARS_DATA_TYPE_NORMAL)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}else{
-			count = makePstmtUpdate("UPDATE arsee_ars_infos SET text = ?, starttime = ?, endtime = ?, indexs = ? WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ? WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}
 		if(count > 0){
 			return "수정 성공";

@@ -17,7 +17,6 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 public class ImageUpload extends ImagePage{
-	public ImageUpload(){}
 	public void imageFileUpload(HttpServletRequest request, String fileName){
 		String folderTypePath = "../../ImageDatas";
 		int sizeLimit = 5 * 1024 * 1024 ; // 5메가까지 제한 넘어서면 예외발생

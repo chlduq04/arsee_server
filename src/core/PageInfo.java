@@ -18,10 +18,10 @@ public class PageInfo {
 		for(String n : names){
 			setUrls(n);
 		}
+		setJsNames("common.js");
 		setCssNames((name+".css"));
 		setJsNames((name+".js"));
 	
-		setJsNames("common.js");
 		
 	}
 	

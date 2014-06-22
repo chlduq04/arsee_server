@@ -20,49 +20,38 @@ public class ParseText extends Database{
 	MorphemeAnalyzer ma;
 
 	public int returnIndex(String argu){
-		//System.out.println(argu);
-		int value = -1;
-		switch(argu){
-		case "일번":case "일":case "일 번":
-			value = 1;
-			break;
-		case "이번":case "이":case "이 번":
-			value = 2;
-			break;
-		case "삼번":case "삼":case "삼 번":
-			value = 3;
-			break;
-		case "사번":case "사":case "사 번":
-			value = 4;
-			break;
-		case "오번":case "오":case "오 번":
-			value = 5;
-			break;
-		case "육번":case "육":case "육 번":
-			value = 6;
-			break;
-		case "칠번":case "칠":case "칠 번":
-			value = 7;
-			break;
-		case "팔번":case "팔":case "팔 번":
-			value = 8;
-			break;
-		case "구번":case "구":case "구 번":
-			value = 9;
-			break;
-		case "영번":case "영":case "영 번":
-			value = 0;
-			break;
-		default:
-			value = -1;
-			break;	
+		for(int i=0;i<Indexing.length;i++){
+			for(int j=0;j<Indexing[0].length;j++){
+				if(Indexing[i][j].equals(argu)){
+					return i;
+				}
+			}
 		}
-
-		return value;
+		return -1;
 	}
 
+	public String indexingNumber(HashMap<String, String> map, String text){		
+		while (true){
+			boolean ch = false;
+			for(int i=0;i<Indexing.length;i++){
+				for(int j=0;j<Indexing[0].length;j++){
+					if(text.indexOf(Indexing[i][j]) != -1){
+						map.put(""+i, indexingNumber(map, text.split(Indexing[i][j])[0].trim()));
+						text = text.split(Indexing[i][j])[1].trim();
+						ch = true;
+					}
+				}
+			}
+			if(!ch){
+				break;
+			}
+		}		
+		return text;
+	}
+
+
 	public String getAllText(String arsnum) throws SQLException{
-		String checkQuery = "SELECT * FROM arsee_ars_infos WHERE number = ? order by depth, parent, indexs";
+		String checkQuery = "SELECT * FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? order by depth, parent, indexs";
 		JSONObject result = new JSONObject();
 		initializeDB();
 		ResultSet rss = makePstmtExecute(checkQuery, arsnum);		
@@ -76,149 +65,56 @@ public class ParseText extends Database{
 				if(depth < Integer.parseInt(rss.getString("depth"))){
 					depth = Integer.parseInt(rss.getString("depth"));
 					results.put(depth, rss.getString("text"));
-				}else{
-
 				}
 			}
 
 		}
 		return result.toJSONString();
 	}
+	
+	public String getDetailText(String arsnum, String depth, String parent, String company) throws SQLException{
+		JSONObject result = new JSONObject();
+		initializeDB();
+		ResultSet rss = makePstmtExecute("SELECT id FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? AND depth = ? AND parent = ? AND company = ? order by depth, parent, indexs", arsnum, depth, parent, company);
+		while(rss.next()){
+			ResultSet rs = makePstmtExecute("SELECT * FROM "+ARS_DBNAME_NOW_INFO_OTHER+" WHERE name_id = ?", rss.getString("id"));
+			String datas = "";
+			while(rs.next()){
+				datas += rs.getString("text") + ARS_DATA_SPLIT_KEY;
+			}
+			result.put(rss.getString("id"), datas);
+		}
+		return result.toJSONString();		
+	}
 
 	public String getDepthText(String arsnum, String depth, String parent, String company) throws SQLException{
-		String checkQuery = "SELECT * FROM arsee_ars_infos WHERE number = ? AND depth = ? AND parent = ? AND company = ? order by depth, parent, indexs";
+		String checkQuery = "SELECT * FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? AND depth = ? AND parent = ? AND company = ? order by depth, parent, indexs";
 		JSONObject result = new JSONObject();
 		initializeDB();
 		ResultSet rss = makePstmtExecute(checkQuery, arsnum, depth, parent, company);
 		while(rss.next()){
-			result.put(rss.getString("indexs"), rss.getString("text"));
+			JSONObject detailset = new JSONObject();
+			ResultSet rs = makePstmtExecute("SELECT * FROM "+ARS_DBNAME_NOW_INFO_OTHER+" WHERE name_id = ?", rss.getString("id"));
+			String datas = ""+rss.getString("text");
+			while(rs.next()){
+				datas +=( ARS_DATA_SPLIT_KEY + rs.getString("text") );
+			}
+			result.put(rss.getString("indexs"), datas);
 		}
 		int dpt = Integer.parseInt(depth);
 		if(dpt > 0){
-			makePstmtUpdate("UPDATE arsee_ars_infos SET count = count + 1 WHERE number = ? AND company = ? AND depth = ? AND indexs = ?", arsnum, company, ""+(dpt-1), parent);			
+			makePstmtUpdate("UPDATE "+ARS_DBNAME_NOW_INFO+" SET count = count + 1 WHERE number = ? AND company = ? AND depth = ? AND indexs = ?", arsnum, company, ""+(dpt-1), parent);			
 		}
-		System.out.println(result.toJSONString());
 		return result.toJSONString();
 	}
 
 
 	public void deleteNumber(String ars) throws SQLException{
-		String deleteQueryInfo = "delete FROM arsee_ars_infos WHERE number = ? LIMIT 1";
-		String deleteQueryKeyword = "delete FROM arsee_kwrds WHERE number = ? LIMIT 1";
+		String deleteQueryInfo = "delete FROM arsee_ar"+ARS_DBNAME_NOW_INFO+"umber = ? LIMIT 1";
+		String deleteQueryKeyword = "delete FROM "+ARS_DBNAME_NOW_INFO_KEYWORD+" WHERE number = ? LIMIT 1";
 		initializeDB();
 		makePstmtUpdate(deleteQueryInfo, ars);
 		makePstmtUpdate(deleteQueryKeyword, ars);
-	}
-
-	public String indexingNumber(HashMap<String, String> map, String text){		
-		while (true){
-			boolean ch = false;
-			if(text.indexOf("일번")!= -1){
-				map.put("1", indexingNumber(map, text.split("일번")[0].trim()));
-				text = text.split("일번")[1].trim();
-				ch = true;
-			}
-			if(text.indexOf("일 번")!= -1){
-				map.put("1", indexingNumber(map, text.split("일 번")[0].trim()));
-				text = text.split("일 번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("이번")!= -1){;
-			map.put("2", indexingNumber(map, text.split("이번")[0].trim()));
-			text = text.split("이번")[1].trim();
-			ch = true;
-			}
-			if(text.indexOf("이 번")!= -1){
-				map.put("2", indexingNumber(map, text.split("이 번")[0].trim()));
-				text = text.split("이 번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("삼번")!= -1){
-				map.put("3", indexingNumber(map, text.split("삼번")[0].trim()));
-				text = text.split("삼번")[1].trim();
-				ch = true;
-
-			}
-			if(text.indexOf("삼 번")!= -1){
-				map.put("3", indexingNumber(map, text.split("삼 번")[0].trim()));
-				text = text.split("삼 번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("사번")!= -1){
-				map.put("4", indexingNumber(map, text.split("사번")[0].trim()));
-				text = text.split("사번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("사 번")!= -1){
-				map.put("4", indexingNumber(map, text.split("사 번")[0].trim()));
-				text = text.split("사 번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("오번")!= -1){
-				map.put("5", indexingNumber(map, text.split("오번")[0].trim()));
-				text = text.split("오번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("오 번")!= -1){
-				map.put("5", indexingNumber(map, text.split("오 번")[0].trim()));
-				text = text.split("오 번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("육번")!= -1){
-				map.put("6", indexingNumber(map, text.split("육번")[0].trim()));
-				text = text.split("육번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("육 번")!= -1){
-				map.put("6", indexingNumber(map, text.split("육 번")[0].trim()));
-				text = text.split("육 번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("칠번")!= -1){
-				map.put("7", indexingNumber(map, text.split("칠번")[0].trim()));
-				text = text.split("칠번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("칠 번")!= -1){
-				map.put("7", indexingNumber(map, text.split("칠 번")[0].trim()));
-				text = text.split("칠 번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("팔번")!= -1){
-				map.put("8", indexingNumber(map, text.split("팔번")[0].trim()));
-				text = text.split("팔번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("팔 번")!= -1){
-				map.put("8", indexingNumber(map, text.split("팔 번")[0].trim()));
-				text = text.split("팔 번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("구번")!= -1){
-				map.put("9", indexingNumber(map, text.split("구번")[0].trim()));
-				text = text.split("구번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("구 번")!= -1){
-				map.put("9", indexingNumber(map, text.split("구 번")[0].trim()));
-				text = text.split("구 번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("영번")!= -1){
-				map.put("0", indexingNumber(map, text.split("영번")[0].trim()));
-				text = text.split("영번")[1].trim();
-				ch = true; 
-			}
-			if(text.indexOf("영 번")!= -1){
-				map.put("0", indexingNumber(map, text.split("영 번")[0].trim()));
-				text = text.split("영 번")[1].trim();
-				ch = true; 
-			}
-			if(!ch){
-				break;
-			}
-		}		
-		return text;
 	}
 
 	public HashMap<String, String> parseNumbers(String ars, String string, String depth, String parent) throws Exception{
@@ -263,19 +159,20 @@ public class ParseText extends Database{
 	public boolean insertNumber(String ars,String string,String depth,String parent, String company) throws Exception{
 		HashMap<String, String> parsingResult = parseNumbers(ars, string, depth, parent);
 
-		String insertQuery = "INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, '1' );";		
-		String checkUpdateQuery = "SELECT text FROM arsee_ars_infos_update WHERE parent = ? AND number = ? AND depth = ? AND indexs = ? AND text = ? AND company = ? AND AmPm = ?";
-		String insertUpdateQueryAm = "INSERT INTO arsee_ars_infos_update ( `text`, `number`, `depth`, `indexs`, `parent`, `count`, `company`, `starttime`, `endtime`, `AmPm` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ? )";
-		String checkStartEndTime = "SELECT starttime, endtime FROM arsee_ars_infos_update WHERE number = ? AND indexs = ? AND depth = ? AND parent = ? AND company = ? AND text = ? AND AmPm = ?";
-		String updateCountStarttime = "UPDATE arsee_ars_infos_update SET count = count + 1, starttime = NOW() WHERE number = ? AND indexs = ? AND depth = ? AND parent = ? AND company = ? AND text = ? AND AmPm = ?";
-		String updateCountEndtime = "UPDATE arsee_ars_infos_update SET count = count + 1, endtime = NOW() WHERE number = ? AND indexs = ? AND depth = ? AND parent = ? AND company = ? AND text = ? AND AmPm = ?";
+		String insertQuery = "INSERT INTO "+ARS_DBNAME_NOW_INFO+" ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, '1' );";		
+		String checkUpdateQuery = "SELECT text FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE parent = ? AND number = ? AND depth = ? AND indexs = ? AND text = ? AND company = ? AND AmPm = ?";
+		String insertUpdateQueryAm = "INSERT INTO "+ARS_DBNAME_NOW_INFO_UPDATE+" ( `text`, `number`, `depth`, `indexs`, `parent`, `count`, `company`, `starttime`, `endtime`, `AmPm` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ? )";
+		String checkStartEndTime = "SELECT starttime, endtime FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE number = ? AND indexs = ? AND depth = ? AND parent = ? AND company = ? AND text = ? AND AmPm = ?";
+		String updateCountStarttime = "UPDATE "+ARS_DBNAME_NOW_INFO_UPDATE+" SET count = count + 1, starttime = NOW() WHERE number = ? AND indexs = ? AND depth = ? AND parent = ? AND company = ? AND text = ? AND AmPm = ?";
+		String updateCountEndtime = "UPDATE "+ARS_DBNAME_NOW_INFO_UPDATE+" SET count = count + 1, endtime = NOW() WHERE number = ? AND indexs = ? AND depth = ? AND parent = ? AND company = ? AND text = ? AND AmPm = ?";
 		String checkTime = "SELECT lastupdate FROM arsee_table_update_check WHERE number = ? AND company = ?";
 		String checkUpdate = "SELECT updates FROM arsee_table_update_check WHERE number = ? AND company = ?";
 		String makeUpdate = "UPDATE arsee_table_update_check SET updates = ? WHERE number = ? AND company = ?";
 		String updateTime = "UPDATE arsee_table_update_check SET lastupdate = NOW() WHERE number = ? AND company = ?";
-		String findMaxCount = "SELECT *, MAX(count) FROM arsee_ars_infos_update WHERE depth = ? AND company = ? AND number = ?";
-		String deleteArsOrigin = "DELETE FROM arsee_ars_infos WHERE number = ? AND company = ?";
-		String deleteArsUpdate = "DELETE FROM arsee_ars_infos_update WHERE number = ? AND company = ?";
+		String findMaxCount = "SELECT *, MAX(count) FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE depth = ? AND company = ? AND number = ?";
+		
+		String deleteArsOrigin = "DELETE FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? AND company = ?";
+		String deleteArsUpdate = "DELETE FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE number = ? AND company = ?";
 		String chechByUpdateTable = "SELECT updates FROM arsee_table_update_check WHERE number = ? AND company = ?";
 		String insertUpdateTable = "INSERT INTO  arsee_table_update_check ( `date` ,`updates` ,`lastupdate` ,`number`, `company`) VALUES ( CURRENT_TIMESTAMP ,  ?,  NOW( ),  ?, ? ) ";
 
@@ -286,9 +183,9 @@ public class ParseText extends Database{
 		Calendar today = Calendar.getInstance();
 
 		String ampm = "1";
-		if(culTimeToSecond(today.get(Calendar.HOUR_OF_DAY),today.get(Calendar.MINUTE),today.get(Calendar.SECOND)) < 43200){
-			ampm = "0";
-		}
+//		if(culTimeToSecond(today.get(Calendar.HOUR_OF_DAY),today.get(Calendar.MINUTE),today.get(Calendar.SECOND)) < 43200){
+//			ampm = "0";
+//		}
 
 		if(findDepthAndNumber.getRow() == 0){
 			findDepthAndNumber.beforeFirst();
@@ -347,14 +244,12 @@ public class ParseText extends Database{
 					return false;
 				}				
 			}else{
-
-
 				System.out.println("업데이트 해야하는가 ? 그렇다");
 				ResultSet findUpdateTime = makePstmtExecute(checkTime, ars, company);
 				findUpdateTime.next();
 				String re[] = findUpdateTime.getString("lastupdate").split(" ");
 				re = re[0].split("-");
-//				if(true){
+				//if(true){
 				if(Integer.parseInt(re[0]) < today.get(Calendar.YEAR) || Integer.parseInt(re[1]) < today.get(Calendar.MONTH)+1 || Integer.parseInt(re[2]) < today.get(Calendar.DATE)){
 					System.out.println("업데이트 시간이 되었다");
 					int count = 0;
@@ -365,21 +260,21 @@ public class ParseText extends Database{
 					while(true){
 						for(int dbdepth=0 ; dbdepth < 10; dbdepth++){
 							// 깊이가 0일 경우 가장 count가 높은 녀석을 찾는다.
-							ResultSet updateRes = makePstmtExecute("SELECT * FROM arsee_ars_infos_update WHERE depth = ? AND company = ? AND number = ? order by count desc limit 1", ""+dbdepth, company, ars);
+							ResultSet updateRes = makePstmtExecute("SELECT * FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE depth = ? AND company = ? AND number = ? order by count desc limit 1", ""+dbdepth, company, ars);
 							updateRes.last();
 							// 있다면
 							if(updateRes.getRow() > 0){
 								updateRes.beforeFirst();
 								updateRes.next();
 								System.out.println(updateRes.getString("text"));
-								ResultSet parentRes = makePstmtExecute("SELECT parent FROM arsee_ars_infos_update WHERE depth = ? AND company = ? AND number = ? group by parent", ""+dbdepth, company, ars);
+								ResultSet parentRes = makePstmtExecute("SELECT parent FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE depth = ? AND company = ? AND number = ? group by parent", ""+dbdepth, company, ars);
 								while(parentRes.next()){
 									count++;
 									System.out.println(count);
 									// 그때의 인덱스를 찾고 시간계산a을 하기위한 시간기준 청하게 된다.
 
 									// 그리고 그와 같은 depth를 가지고 index가 다른 시간들을 찾는다.
-									for(int friend = -1 ; friend < 10 ; friend++){								
+									for(int friend = -1 ; friend < 100 ; friend++){								
 										if(friend > 10){
 											friend = 100;
 										}
@@ -390,7 +285,7 @@ public class ParseText extends Database{
 
 										// 그리고 시간을 계속해서 조금씩 늘려가면서 그 사이에 depth index가 같은
 										while(startchecking <= timechecking[1]){
-											String test2 = "SELECT * FROM arsee_ars_infos_update WHERE parent = ? AND depth = ? AND company = ? AND indexs = ? AND number = ? AND (starttime >= ? OR endtime <= ?) order by count desc";
+											String test2 = "SELECT * FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE parent = ? AND depth = ? AND company = ? AND indexs = ? AND number = ? AND (starttime >= ? OR endtime <= ?) order by count desc";
 											ResultSet checkQuery = makePstmtExecute(test2, parentRes.getString("parent"), ""+dbdepth, company, ""+friend, ars, culSecondToTime(startchecking - 3600), culSecondToTime(startchecking));
 											checkQuery.last();
 											boolean find = false;
@@ -445,18 +340,18 @@ public class ParseText extends Database{
 											// 그리고 max가 아닌 찌거기들의 id를 지워준다.
 											for(int index : checkingDates.keySet()){
 												if(index != maxid){
-													makePstmtUpdate("DELETE FROM arsee_ars_infos_update WHERE id = ?", ""+index);
+													makePstmtUpdate("DELETE FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE id = ?", ""+index);
 												}
 											}
 										}
 										// 그리고 keySet을 불러온 뒤
 										for(String keys : hmap.keySet()){
 											// 그 아이디를 찾고
-											ResultSet findAndInsert = makePstmtExecute("SELECT * FROM arsee_ars_infos_update WHERE id = ?", hmap.get(keys));
+											ResultSet findAndInsert = makePstmtExecute("SELECT * FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE id = ?", hmap.get(keys));
 											findAndInsert.next();
 											makePstmtUpdate(insertQuery, findAndInsert.getString("text"), ars, findAndInsert.getString("depth"), keys, findAndInsert.getString("parent"), company, culSecondToTime(timechecking[0]), culSecondToTime(timechecking[1]));								
 											checkFrequency(ars, findAndInsert.getString("text"), findAndInsert.getString("depth"), findAndInsert.getString("parent"), keys, company);
-											makePstmtUpdate("DELETE FROM arsee_ars_infos_update WHERE id = ?", hmap.get(keys));
+											makePstmtUpdate("DELETE FROM "+ARS_DBNAME_NOW_INFO_UPDATE+" WHERE id = ?", hmap.get(keys));
 											// 최고값을 업데이트 한뒤, 임시 테이블에서 지운다.
 										}
 										System.out.println("일단 업데이트가 끝났습니다.");
@@ -514,14 +409,11 @@ public class ParseText extends Database{
 		KeywordList kl = keTest(text);
 		for( int i = 0; i < kl.size(); i++ ) {
 			Keyword kwrd = kl.get(i);
-			//			System.out.println(kwrd.getTag()+" : "+kwrd.getString());
 			if( kwrd.getTag() == "NNG" && returnIndex(kwrd.getString())==-1){
-				//System.out.println(kwrd.getTag());
-
-				String checkTimeQuery = "SELECT id FROM arsee_ars_infos WHERE number = ? AND company = ? AND parent = ? AND depth = ? AND text = ? AND indexs = ?";
-				String checkQuery = "SELECT id FROM arsee_kwrds WHERE key_word = ? and number = ? and depth = ? and parent = ? and indexs = ? and company = ?";
-				String updateCount = "UPDATE arsee_kwrds SET count = count + 1 WHERE key_word = ? and depth =? and parent = ? and indexs = ? and company = ?";
-				String insertQuery = "INSERT INTO arsee_kwrds (`key_word`, `number`, `depth`, `parent`, `indexs`, `count`, `company`, `ars_info_id`) VALUES (?, ?, ?, ?, ? ,?, ?, ?);";
+				String checkTimeQuery = "SELECT id FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? AND company = ? AND parent = ? AND depth = ? AND text = ? AND indexs = ?";
+				String checkQuery = "SELECT id FROM "+ARS_DBNAME_NOW_INFO_KEYWORD+" WHERE key_word = ? and number = ? and depth = ? and parent = ? and indexs = ? and company = ?";
+				String updateCount = "UPDATE "+ARS_DBNAME_NOW_INFO_KEYWORD+" SET count = count + 1 WHERE key_word = ? and depth =? and parent = ? and indexs = ? and company = ?";
+				String insertQuery = "INSERT INTO "+ARS_DBNAME_NOW_INFO_KEYWORD+" (`key_word`, `number`, `depth`, `parent`, `indexs`, `count`, `company`, `ars_info_id`) VALUES (?, ?, ?, ?, ? ,?, ?, ?);";
 				initializeDB();
 				ResultSet rs = makePstmtExecute(checkQuery, kwrd.getString(), arsnum, dpt, parent, index, company);
 				rs.last();
@@ -550,10 +442,10 @@ public class ParseText extends Database{
 			if( kwrd.getTag() == "NNG" && returnIndex(kwrd.getString())==-1){
 				//System.out.println(kwrd.getTag());
 				if(insert){
-					String checkTimeQuery = "SELECT id FROM arsee_ars_infos WHERE number = ? AND company = ? AND parent = ? AND depth = ? AND text = ? AND indexs = ?";
-					String checkQuery = "SELECT id FROM arsee_kwrds WHERE key_word = ? and number = ? and depth = ? and parent = ? and indexs = ? and company = ?";
-					String updateCount = "UPDATE arsee_kwrds SET count = count + 1 WHERE key_word = ? and depth =? and parent = ? and indexs = ? and company = ?";
-					String insertQuery = "INSERT INTO arsee_kwrds (`key_word`, `number`, `depth`, `parent`, `indexs`, `count`, `company`, `ars_info_id`) VALUES (?, ?, ?, ?, ? ,?, ?, ?);";
+					String checkTimeQuery = "SELECT id FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? AND company = ? AND parent = ? AND depth = ? AND text = ? AND indexs = ?";
+					String checkQuery = "SELECT id FROM "+ARS_DBNAME_NOW_INFO_KEYWORD+" WHERE key_word = ? and number = ? and depth = ? and parent = ? and indexs = ? and company = ?";
+					String updateCount = "UPDATE "+ARS_DBNAME_NOW_INFO_KEYWORD+" SET count = count + 1 WHERE key_word = ? and depth =? and parent = ? and indexs = ? and company = ?";
+					String insertQuery = "INSERT INTO "+ARS_DBNAME_NOW_INFO_KEYWORD+" (`key_word`, `number`, `depth`, `parent`, `indexs`, `count`, `company`, `ars_info_id`) VALUES (?, ?, ?, ?, ? ,?, ?, ?);";
 					initializeDB();
 					ResultSet rs = makePstmtExecute(checkQuery, kwrd.getString(), arsnum, dpt, parent, index, company);
 					rs.last();
@@ -587,7 +479,7 @@ public class ParseText extends Database{
 	}
 
 	public String checkMaxKwrdByCount(String arsnum, String company, String kwrd) throws SQLException{
-		String checkQuery = "SELECT * FROM arsee_kwrds WHERE number = ? AND key_word = ? AND company = ? order by depth, parent, indexs";
+		String checkQuery = "SELECT * FROM "+ARS_DBNAME_NOW_INFO_KEYWORD+" WHERE number = ? AND key_word = ? AND company = ? order by depth, parent, indexs";
 		JSONObject result = new JSONObject();
 		initializeDB();
 		ResultSet rss = makePstmtExecute(checkQuery, arsnum, kwrd, company);
@@ -601,17 +493,6 @@ public class ParseText extends Database{
 		return result.toJSONString();
 	}
 
-/*	public String checkMaxKwrdByCount(String arsnum, String kwrd, String depth) throws SQLException{
-		String checkQuery = "SELECT * FROM arsee_kwrds WHERE number = ? AND depth = ? AND key_word = ? order by depth, parent, indexs";
-		JSONObject result = new JSONObject();
-		initializeDB();
-		ResultSet rss = makePstmtExecute(checkQuery, arsnum, depth, kwrd);
-		while(rss.next()){
-			result.put("depth-index",rss.getString("depth") +"-"+ rss.getString("indexs"));
-		}
-		return result.toJSONString();
-	}
-*/
 	public String checkMaxKwrdBy(){
 		return "";
 	}
@@ -640,17 +521,11 @@ public class ParseText extends Database{
 	@SuppressWarnings("unchecked")
 	public boolean parsingForGoal(String string, String arsnum, String depth, String parent, String company) throws Exception{
 		JSONObject a = new JSONObject();
-		System.out.println("1");
 		a.put("text", string);
-		System.out.println("2");
 		a.put("ars", arsnum);		
-		System.out.println("3");
 		a.put("dpt", depth);
-		System.out.println("4");
 		a.put("parent", parent);
-		System.out.println("5");
 		a.put("company", company);
-		System.out.println("6");
 		return insertNumber(a.get("ars").toString(),a.get("text").toString(),a.get("dpt").toString(),a.get("parent").toString(), a.get("company").toString());
 	}
 

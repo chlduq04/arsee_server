@@ -3,22 +3,70 @@ var find_number_ajax = $(".management_main").attr("number");
 var find_by_min_time = $("#starttm").val();
 var find_by_max_time = $("#endtm").val();
 var jsondata = [];
+var click_by_id = {};
 var root;
-
+var tooltip;
+var mousex, mousey;
+var click_by_root;
+var day_or_holiday = "day";
 $( document ).ready(function() {
 	draw_svg();
 	click_add_database();
 	click_search_database();
+	checkMousePosition();
+	$("[data-toggle='tooltip']").tooltip();
+	//analysis_data_tree();
 });
+
+function checkMousePosition(){
+	$(document).bind('mousemove',function(e){ 
+		mousex = e.pageX;
+		mousey = e.pageY; 
+	}); 
+
+}
+
+function treeOptionPop(open){
+	if(open){
+		$("#cursor_popup").css({display:"block"});
+		$("#cursor_popup_bg").css({left:mousex, top:mousey, display:"block"});
+		$("#cursor_popup_black").css({display:"block"});
+	}else{
+		$("#cursor_popup").css({display:"none"});
+		$("#cursor_popup_bg").css({display:"none"});
+		$("#cursor_popup_black").css({display:"none"});
+	}
+}
+
+function ShowTooltip(tooltip_box, tooltip_text, evt)
+{
+	var maxlength = 0;
+	for(var i=0;i<tooltip_text.length;i++){
+		if(maxlength < tooltip_text[i].getComputedTextLength()){
+			maxlength = tooltip_text[i].getComputedTextLength();
+		}
+	}
+	tooltip_box.attr("visibility","visible");
+	tooltip_box.attr("width",maxlength+10);
+	tooltip_text.attr("visibility","visible");
+}
+
+function HideTooltip(tooltip_box, tooltip_text)
+{
+	tooltip_box.attr("visibility","hidden");
+	tooltip_text.attr("visibility","hidden");
+}
+
 function draw_svg(){
 
 	var colors = ["#bd0026","#fecc5c", "#fd8d3c", "#f03b20", "#B02D5D",
 	              "#9B2C67", "#982B9A", "#692DA7", "#5725AA", "#4823AF",
 	              "#d7b5d8","#dd1c77","#5A0C7A","#5A0C7A"];
 
-	treeJSON = d3.json("method/management-insert.jsp?number="+find_number_ajax+"&company="+find_company_ajax+"&func=parse"+"&t_min="+find_by_min_time+"&t_max="+find_by_max_time, function(error, treeData) {
+	treeJSON = d3.json(makeGetUrl("method/management-"+day_or_holiday+".jsp",{number:find_number_ajax,company:find_company_ajax,func:"parse",t_min:find_by_min_time,t_max:find_by_max_time}), function(error, treeData) {
 		// Get JSON data
 		// Calculate total nodes, max label length
+		var maxLabelLengthLimit = 40;
 		var totalNodes = 0;
 		var maxLabelLength = 0;
 		// variables for drag/drop
@@ -63,7 +111,8 @@ function draw_svg(){
 		// Call visit function to establish maxLabelLength
 		visit(treeData, function(d) {
 			totalNodes++;
-			maxLabelLength = Math.max(d.name.length, maxLabelLength);
+//			maxLabelLength = Math.max(d.name.length, maxLabelLength);
+			maxLabelLength = maxLabelLengthLimit;
 
 		}, function(d) {
 			return d.children && d.children.length > 0 ? d.children : null;
@@ -119,7 +168,7 @@ function draw_svg(){
 
 		function initiateDrag(d, domNode) {
 			draggingNode = d;
-			
+
 			d3.select(domNode).select('.ghostCircle').attr('pointer-events', 'none');
 			d3.selectAll('.ghostCircle').attr('class', 'ghostCircle show');
 			d3.select(domNode).attr('class', 'node activeDrag');
@@ -166,7 +215,6 @@ function draw_svg(){
 		.attr("height", viewerHeight)
 		.attr("class", "overlay")
 		.call(zoomListener);
-
 
 		// Define the drag listeners for drag/drop behaviour of nodes.
 		dragListener = d3.behavior.drag()
@@ -230,8 +278,12 @@ function draw_svg(){
 						}	
 					}			
 				}
+				if(selectedNode.indexs == "100"){
+					endDrag();
+					return ;					
+				}
 				// now remove the element from the parent, and insert it into the new elements children
-				
+
 				var index = draggingNode.parent.children.indexOf(draggingNode);
 				if (index > -1) {
 					draggingNode.parent.children.splice(index, 1);
@@ -427,14 +479,63 @@ function draw_svg(){
 				return d.children || d._children ? "end" : "start";
 			})
 			.text(function(d) {
-				return d.name;
+				return d.name.substring(0,maxLabelLengthLimit);
 			})
-			.style("fill-opacity", 0);
+			.on("click",function(d){
+				if(!(click_by_id["n_id"] == null || click_by_id["n_id"] == undefined || $("#addition-pop").css("display") == "none")){
+					$("#modify-text").val("");
+					$("#modify-startt").val("");
+					$("#modify-endt").val("");
+
+					$("#addition-text").val("");
+					$("#addition-startt").val("");
+					$("#addition-endt").val("");
+					$("#addition-select").val("");
+					
+				}else{
+					treeOptionPop(true);
+					click_by_id["n_id"] = d.id;
+					click_by_id["n_parent"] = d.parentc;
+					click_by_id["n_indexs"] = d.indexs;
+					click_by_id["n_start"] = d.starttime;
+					click_by_id["n_end"] = d.endtime;
+					click_by_id["n_text"] = d.name;
+					if(d.parentc == "-1"){
+						click_by_id["n_depth"] = 0;
+						click_by_id["n_parent"] = "";
+						click_by_id["n_parent_index"] = "0";
+					}else if(d.parent.parentc == "-1"){
+						click_by_id["n_depth"] = 1;
+						click_by_id["n_parent"] = "";
+						click_by_id["n_parent_index"] =  d.indexs;
+					}else{
+						click_by_id["n_depth"] = d.parentc.length+1;
+						click_by_id["n_parent"] = d.parentc;
+						click_by_id["n_parent_index"] = d.indexs;
+					}
+					$("#modify-text").val(d.name);
+					$("#modify-startt").val(d.starttime);
+					$("#modify-endt").val(d.endtime);
+					$("#modify-type").val(d.type);
+
+					$("#addition-text").val(d.name);
+					$("#addition-startt").val(d.starttime);
+					$("#addition-endt").val(d.endtime);
+					$("#addition-select").val(d.indexs);
+						
+					click_by_root = d;
+					$(".graph-bts").css("opacity","1");
+				}
+			}).on("mouseover",function(d){
+				ShowTooltip($(this).parent().find(".tooltip_bg"), $(this).parent().find(".tooltip_svg"), d);
+			}).on("mouseout",function(d){
+				HideTooltip($(this).parent().find(".tooltip_bg"), $(this).parent().find(".tooltip_svg"));
+			});
 
 			// phantom node to give us mouseover in a radius around it
 			nodeEnter.append("circle")
 			.attr('class', 'ghostCircle')
-			.attr("r", 30)
+			.attr("r", 10)
 			.attr("opacity", 0.2) // change this to zero to hide the target area
 			.style("fill", "red")
 			.attr('pointer-events', 'mouseover')
@@ -445,144 +546,42 @@ function draw_svg(){
 				outCircle(node);
 			});
 
-			nodeEnter.append("svg:image")
-			.attr("x","2")
-			.attr("y","3.5")
-			.attr("width","10")
-			.attr("height","10")
-			.attr("id",function(d){return "manage-plusbt-"+d.id;})
-			.attr("xlink:href","../images/manage-plus-icon.png")
-			.on("click", function(d) { 
-				popup_css_block($(".manage-modify-div-svg-"+d.id),false);
-				popup_css_block($("#manage-closebt-"+d.id),false);
-				popup_css_block($("#manage-modifybt-"+d.id),true);
 
-				popup_css_block($(".manage-div-svg-"+d.id),true);
-				popup_css_block($("#manage-minusbt-"+d.id),true);
-			})
-
-			nodeEnter.append("svg:image")
-			.attr("x","2")
-			.attr("y","3.5")
-			.attr("width","10")
-			.attr("height","10")
-			.attr("id",function(d){return "manage-minusbt-"+d.id;})
-			.attr("style","display:none;")
-			.attr("xlink:href","../images/manage-minus-icon.png")
-			.on("click", function(d) { 
-				popup_css_block($(".manage-div-svg-"+d.id),false);
-				popup_css_block($("#manage-minusbt-"+d.id),false);
-			})
-
-
-			nodeEnter.append("svg:image")
-			.attr("x","12")
-			.attr("y","4.5")
-			.attr("width","8")
-			.attr("height","8")
-			.attr("id",function(d){return "manage-deletebt-"+d.id;})
-			.attr("xlink:href","../images/manage-delete-icon.png")
-			.on("click", function(d) { 
-			})
-
-			nodeEnter.append("svg:image")
-			.attr("x","-5")
+			nodeEnter.append("svg:rect")
+			.attr("class","tooltip_bg")
+			.attr("id","tooltip_bg")
+			.attr("x","0")
 			.attr("y","5")
-			.attr("width","7.5")
-			.attr("height","7.5")
-			.attr("id",function(d){return "manage-modifybt-"+d.id;})
-			.attr("xlink:href","../images/manage-modify-icon.png")
-			.on("click", function(d) { 
-				popup_css_block($(".manage-div-svg-"+d.id),false);
-				popup_css_block($("#manage-minusbt-"+d.id),false);
+			.attr("rx","4")
+			.attr("ry","4")
+			.attr("width","80")
+			.attr("height","36")
+			.attr("visibility","hidden")
+			.attr("fill","white")
+			.attr("stroke","black")
+			.attr("stroke-width","1")
+			.attr("opacity","0.85");
 
-				popup_css_block($(".manage-modify-div-svg-"+d.id),true);
-				popup_css_block($("#manage-closebt-"+d.id),true);
-				popup_css_block($("#manage-modifybt-"+d.id),false);
+			nodeEnter.append("svg:text")
+			.attr("class","tooltip_svg")
+			.attr("id","tooltip_svg")
+			.attr("x","5")
+			.attr("y","18")
+			.attr("visibility","hidden")
+			.html(function(d){
+				return "Count : "+d.count;
+			});
 
-			})
+			nodeEnter.append("svg:text")
+			.attr("class","tooltip_svg")
+			.attr("id","tooltip_svg")
+			.attr("x","5")
+			.attr("y","35")
+			.attr("visibility","hidden")
+			.html(function(d){
+				return "Text : "+d.name;
+			});
 
-
-			nodeEnter.append("svg:image")
-			.attr("x","-5")
-			.attr("y","5")
-			.attr("width","7.5")
-			.attr("height","7.5")
-			.attr("style","display:none")
-			.attr("id",function(d){return "manage-closebt-"+d.id;})
-			.attr("xlink:href","../images/manage-close-icon.png")
-			.on("click", function(d) { 
-				popup_css_block($(".manage-modify-div-svg-"+d.id),false);
-				popup_css_block($("#manage-closebt-"+d.id),false);
-				popup_css_block($("#manage-modifybt-"+d.id),true);
-			})
-
-
-
-			nodeEnter.append("svg:switch").append("svg:foreignObject")
-			.attr("x", 0)
-			.attr("y", 5)
-			.attr("width", 300)
-			.attr("height", 500)
-			.append("xhtml:body")
-			.style("font", "14px 'Helvetica Neue'")
-			.append("div")
-			.attr("class",function(d){return "manage-div-svg manage-div-svg-"+d.id;})
-			.attr("node_id",function(d){return d.id;})
-			.attr("node_parent",function(d){return d.parentc;})
-			.attr("node_depth",function(d){return d.depth;})
-			.attr("node_indexs",function(d){return d.indexs;})
-			.attr("node_company",function(d){return d.company;})
-			.html(function(d){ 
-				var tag = "" 
-					+"<input placeholder='Text' class='manage-insert-data-svg-"+d.id+" form-control text-input' type='text' />"
-					+"<select placeholder='Index' class='manage-insert-data-index-svg-"+d.id+" form-control select-input' type='text'>"
-					+"<option value='0'>"+0+"</option>"
-					+"<option value='1'>"+1+"</option>"
-					+"<option value='2'>"+2+"</option>"
-					+"<option value='3'>"+3+"</option>"
-					+"<option value='4'>"+4+"</option>"
-					+"<option value='5'>"+5+"</option>"
-					+"<option value='6'>"+6+"</option>"
-					+"<option value='7'>"+7+"</option>"
-					+"<option value='8'>"+8+"</option>"
-					+"<option value='9'>"+9+"</option>"
-					+"</select>"
-					+"<input value='10:00:00' placeholder='10:00:00' class='manage-insert-data-starttime-svg-"+d.id+" form-control' type='text'/>"
-					+"<input value='21:00:00' placeholder='21:00:00' class='manage-insert-data-endtime-svg-"+d.id+" form-control' type='text' />"
-					+"<input value='+' type='button' class='btn btn-lg btn-primary btn-block manage-submit submit-addchild-"+d.id+"' />";
-				return tag;
-			})
-
-			nodeEnter.append("svg:switch").append("svg:foreignObject")
-			.attr("x", 0)
-			.attr("y", 5)
-			.attr("width", 300)
-			.attr("height", 500)
-			.append("xhtml:body")
-			.style("font", "14px 'Helvetica Neue'")
-			.append("div")
-			.attr("class",function(d){return "manage-modify-div-svg manage-modify-div-svg-"+d.id;})
-			.attr("node_id",function(d){return d.id;})
-			.html(function(d){ 
-				var tag = "" 
-					+"<input type='hidden' value='"+d.id+"' class='manage-modify-data-svg-"+d.id+" form-control' type='text'/>"
-					+"<input value='"+d.name+"' class='manage-modify-data-text-svg-"+d.id+" form-control text-input' type='text'/>"
-					+"<select placeholder='Index' class='manage-modify-data-index-svg-"+d.id+" form-control select-input' type='text'>"
-					for( var i=0 ; i < 10 ; i++ ){
-						if(i == d.indexs){
-							tag += "<option value='"+i+"' selected>"+i+"</option>";
-						}else{
-							tag += "<option value='"+i+"'>"+i+"</option>";
-						}
-					}
-				tag 
-				+= "</select>"
-					+"<input value='"+d.starttime+"' class='manage-modify-data-starttm-svg-"+d.id+" form-control' type='text'/>"
-					+"<input value='"+d.endtime+"' class='manage-modify-data-endtm-svg-"+d.id+" form-control' type='text'/>"
-					+"<input value='+' type='button' class='btn btn-lg btn-primary btn-block manage-modify submit-modchild-"+d.id+"' />";
-				return tag;
-			})
 
 
 			// Update the text to reflect whether node has children or not.
@@ -594,7 +593,10 @@ function draw_svg(){
 				return d.children || d._children ? "end" : "start";
 			})
 			.text(function(d) {
-				return d.indexs + ". " + d.name;
+				if(d.name.length <= maxLabelLengthLimit/2){
+					return d.indexs + ". " + d.name;
+				}
+				return d.indexs + ". " + d.name.substring(0,maxLabelLengthLimit/2)+"...";
 			});
 
 			// Change the circle fill depending on whether it has children and is collapsed
@@ -639,10 +641,19 @@ function draw_svg(){
 			link.enter().insert("svg:path", "g")
 			.attr("class", "link")
 			.attr("stroke",function(d){
-				return "blue";
+				if(d.target.type == "info"){
+					return "black";
+				}else if(d.target.type == "error"){
+					return "red";
+				}else if(d.target.type == "star"){
+					return "#0E53A7";
+				}else if(d.target.type == "sharp"){
+					return "#4512AE";
+				}	
+				return "#1A1EB2";
 			})
 			.attr("stroke-width", function (d,i) {
-				return d.target.count;
+				return d.target.count/2;
 			})
 			.attr("stroke-opacity",function(d,i){
 				return 0.3;
@@ -656,7 +667,8 @@ function draw_svg(){
 					source: o,
 					target: o
 				});
-			});
+			})
+
 
 			// Transition links to their new position.
 			link.transition()
@@ -682,40 +694,6 @@ function draw_svg(){
 			nodes.forEach(function(d) {
 				d.x0 = d.x;
 				d.y0 = d.y;
-				$(".submit-addchild-"+d.id).bind("click",function(){
-					var target = $(".manage-div-svg.manage-div-svg-"+d.id);
-					var addparams = {
-							n_id : target.attr("node_id"),
-							n_depth : target.attr("node_depth"),
-							n_parent : target.attr("node_parent"),
-							n_parent_index : target.attr("node_indexs"),
-							n_index : $(".manage-insert-data-index-svg-"+d.id).val(),
-							n_text : $(".manage-insert-data-svg-"+d.id+".form-control").val(),
-							n_start: $(".manage-insert-data-starttime-svg-"+d.id).val(),
-							n_end : $(".manage-insert-data-endtime-svg-"+d.id).val()
-					};
-					postAjax("method/management-insert.jsp?number="+find_number_ajax+"&company="+find_company_ajax+"&func=add", addparams, null, function(s){alert(s.trim());$("svg").remove();draw_svg();}, function(e){alert(e);});
-				});
-
-				$(".submit-modchild-"+d.id).bind("click",function(){
-					var target = $(".manage-div-svg.manage-div-svg-"+d.id);
-					var addparams = {
-							n_id : target.attr("node_id"),
-							n_indexs : $(".manage-modify-data-index-svg-"+d.id).val(),
-							n_text : $(".manage-modify-data-text-svg-"+d.id).val(),
-							n_start: $(".manage-modify-data-starttm-svg-"+d.id).val(),
-							n_end : $(".manage-modify-data-endtm-svg-"+d.id).val()
-					};
-					postAjax("method/management-insert.jsp?number="+find_number_ajax+"&company="+find_company_ajax+"&func=mod", addparams, null, function(s){alert(s.trim());$("svg").remove();draw_svg();}, function(e){alert(e);});
-				});
-
-				$("#manage-deletebt-"+d.id).bind("click",function(){
-					var target = $(".manage-div-svg.manage-div-svg-"+d.id);
-					var addparams = {
-							n_id : target.attr("node_id")
-					};
-					postAjax("method/management-insert.jsp?number="+find_number_ajax+"&company="+find_company_ajax+"&func=del", addparams, null, function(s){alert(s.trim());$("svg").remove();draw_svg();}, function(e){alert(e);});
-				});
 			});
 		}
 
@@ -738,7 +716,7 @@ function click_search_database(){
 	$("#find-time-min-max").bind("click",function(){
 		find_by_min_time = $("#starttm").val();
 		find_by_max_time = $("#endtm").val();
-		postAjax("method/management-insert.jsp?number="+find_number_ajax+"&company="+find_company_ajax+"&func=parse", {t_min : find_by_min_time, t_max : find_by_max_time}, null, function(s){$("svg").remove();draw_svg();}, function(e){alert(e);});
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "parse" }), {t_min : find_by_min_time, t_max : find_by_max_time}, null, function(s){$("svg").remove();draw_svg();}, function(e){alert(e);});
 	});
 }
 
@@ -748,15 +726,16 @@ function aroundtree_to_json(root){
 	var checkdepth = parseInt(root.depth)-1;
 	if(root.parent){
 		if(checkdepth == 0){
-			obj.parent = "0";						
+			obj.parent = "0";
 		}else if(checkdepth == 1){
 			obj.parent = root.parent.indexs;															
 		}else{
-			obj.parent = root.parent.parentc + root.parent.indexs;												
+			obj.parent = root.parent.parentc + root.parent.indexs;	
 		}
 	}else{
 		obj.parent = "-1";
 	}
+	root.parentc = obj.parent;
 	obj.depth = checkdepth;
 	obj.index = root.indexs;
 	jsondata.push(obj); 
@@ -769,6 +748,14 @@ function aroundtree_to_json(root){
 }
 
 function click_add_database(){
+	$("#cursor_popup_black").click(function(){
+		treeOptionPop(false);
+	})
+
+	$(".graph-bts").click(function(){
+		treeOptionPop(false);
+	})
+
 	$("#manage-add-depth").click(function(){
 		length = $("#manage-depth-buttons-option").attr("length");
 		length++;
@@ -787,13 +774,138 @@ function click_add_database(){
 	$("#manage-add-depth").click(function(){
 
 	});
-	
+
 	$("#set-tree-change").click(function(){
+		jsondata = [];
 		aroundtree_to_json(root);
-		postAjax("method/management-insert.jsp?number="+find_number_ajax+"&company="+find_company_ajax+"&func=tree", {data : JSON.stringify(jsondata)}, null, function(s){
+		
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tree" }), {data : JSON.stringify(jsondata)}, null, function(s){
 			$("svg").remove();draw_svg();
 		}, function(e){alert(e);});
 
+	});
+
+	$("#set-mod-submit").click(function(){
+		click_by_id["n_text"] = $("#modify-text").val();
+		click_by_id["n_start"] = $("#modify-startt").val();
+		click_by_id["n_end"] = $("#modify-endt").val();
+		click_by_id["n_type"] = $("#modify-type").val();
+		if(click_by_id["n_type"] == "info"){
+			click_by_id["n_indexs"] = "s";
+		}else if(click_by_id["n_type"] == "error"){
+			click_by_id["n_indexs"] = "-"
+		}else if(click_by_id["n_type"] == "sharp"){
+			click_by_id["n_indexs"] = "#"
+		}else if(click_by_id["n_type"] == "star"){
+			click_by_id["n_indexs"] = "*"
+		}
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "mod" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+	});
+
+	$("#set-add-submit").click(function(){
+		if($("#addition-pop").find("li[class=active]").attr("addition-type") == "one"){
+			click_by_id["n_text"] = $("#addition-text").val();
+			click_by_id["n_indexs"] = $("#addition-idx").val();
+			click_by_id["n_type"] = $("#addition-type").val();
+			click_by_id["n_start"] = $("#addition-startt").val();
+			click_by_id["n_end"] = $("#addition-endt").val();
+			if(click_by_id["n_type"] == "info"){
+				click_by_id["n_indexs"] = "s";
+			}else if(click_by_id["n_type"] == "error"){
+				click_by_id["n_indexs"] = "-"
+			}else if(click_by_id["n_type"] == "sharp"){
+				click_by_id["n_indexs"] = "#"
+			}else if(click_by_id["n_type"] == "star"){
+				click_by_id["n_indexs"] = "*"
+			}
+			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_one" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+		}else if($("#addition-pop").find("li[class=active]").attr("addition-type") == "text"){
+			click_by_id["n_text"] = $("#addition-text-noidx").val();
+			click_by_id["n_start"] = $("#addition-startt-noidx").val();
+			click_by_id["n_end"] = $("#addition-endt-noidx").val();
+			if(click_by_id["n_type"] == "info"){
+				click_by_id["n_indexs"] = "s";
+			}else if(click_by_id["n_type"] == "error"){
+				click_by_id["n_indexs"] = "-"
+			}else if(click_by_id["n_type"] == "sharp"){
+				click_by_id["n_indexs"] = "#"
+			}else if(click_by_id["n_type"] == "star"){
+				click_by_id["n_indexs"] = "*"
+			}
+			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_text" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+		}
+	});
+
+	$("#set-del-submit").click(function(){
+		jsondata = [];
+		aroundtree_to_json(click_by_root);
+		click_by_id["del_tree"] = JSON.stringify(jsondata);
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "del" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+	});
+	
+	$("#set-del-child-submit").click(function(){
+		jsondata = [];
+		if(click_by_root.children){
+			for( var i=0 ; i < click_by_root.children.length ; i++){
+				aroundtree_to_json(click_by_root.children[i]);		
+			}
+		}
+		click_by_id["del_tree"] = JSON.stringify(jsondata);
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "del" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+	});
+	
+	$("#set-tree-det-bt").click(function(){
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tags_result" }), click_by_id, null, function(s){
+			var inputs = $("#detail-pop").find("input");
+			var result = JSON.parse(s);
+			var index = 0;
+			for(var k in result) {
+				$(inputs[index]).attr({"detail_id":k});
+				$(inputs[index++]).val(result[k]);
+			}
+			
+			for( ; index < inputs.length ; index++){
+				$(inputs[index]).val("");
+				$(inputs[index]).attr({"detail_id":-(index+1)});
+			}
+			
+		}, function(e){alert(e);});		
+	});
+	
+	$("#set-det-submit").click(function(){
+		var inputs = $("#detail-pop").find("input");
+		var datadic = {};
+		var detail_new = [];
+		var detail_old = [];
+		datadic["parent_id"] = click_by_id["n_id"];
+		for(var i=0 ; i < inputs.length ; i++){
+			if($(inputs[i]).attr("detail_id") < 0){
+				if($(inputs[i]).val() != "" && $(inputs[i]).val() != null){
+					detail_new.push($(inputs[i]).val());
+				}else{
+					break;
+				}
+			}else{
+				var dic = {"text" : $(inputs[i]).val(), "id" : $(inputs[i]).attr("detail_id")};
+				detail_old.push(dic);
+			}
+		}
+		datadic["new"] = JSON.stringify(detail_new);
+		datadic["old"] = JSON.stringify(detail_old);
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tags_insert" }), datadic, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});		
+		
+	});
+	
+	$(".form-group.day-change").find("input").click(function(){
+		if($(this).attr("value") == "day"){
+			day_or_holiday = "day";
+			$("svg").remove();
+			draw_svg();
+		}else if($(this).attr("value") == "holiday"){
+			day_or_holiday = "holiday";
+			$("svg").remove();
+			draw_svg();
+		}
 	});
 }
 
@@ -820,3 +932,4 @@ function aroundtree_to_tree(root){
 	}
 	return obj;
 }
+

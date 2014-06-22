@@ -4,12 +4,13 @@
 }
 
 html {
+	
 }
 
 #body {
-	overflow:hidden;
+	overflow: hidden;
 	margin-bottom: 50px;
-	margin-top: 50px;	
+	margin-top: 50px;
 }
 
 .header {
@@ -37,6 +38,9 @@ html {
 }
 
 .main-icon {
+	cursor:pointer;
+	height: 60px;
+	width: 60px;
 	margin-left: 5px;
 	margin-top: 5px;
 	float: left;

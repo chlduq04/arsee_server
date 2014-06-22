@@ -10,7 +10,7 @@ public class MakeJsonData {
 	boolean checkfirst = false;
 	
 	private MakeJsonData(String company){
-		structs = new MakeJsonDateTree("start", "-1", "-1", "-1", "0", company, "00:00:00","24:00:00", "1");
+		structs = new MakeJsonDateTree("start", "-1", "-1", "-1", "0", company, "00:00:00","24:00:00", "1", "start");
 	}
 	
 	private static class SingletonHolder { 
@@ -26,10 +26,10 @@ public class MakeJsonData {
 	}
 	
 	public void initParsingData(String company){
-		structs = new MakeJsonDateTree("start", "-1", "-1", "-1", "0", company, "00:00:00", "24:00:00", "1");
+		structs = new MakeJsonDateTree("start", "-1", "-1", "-1", "0", company, "00:00:00", "24:00:00", "1", "start");
 	}
 	
-	public boolean parsingData( String id, String text, String depth, String parent, String index, String company, String starttime, String endtime, String count ){
+	public boolean parsingData( String id, String text, String depth, String parent, String index, String company, String starttime, String endtime, String count, String type ){
 		int dp = Integer.parseInt(depth), max = 0;
 		String pr = parent;
 		MakeJsonDateTree data = structs;
@@ -40,7 +40,7 @@ public class MakeJsonData {
 			}
 			max++;
 		}
-		data.makeChild(text, depth, parent, id, index, company, starttime, endtime, count);
+		data.makeChild(text, depth, parent, id, index, company, starttime, endtime, count, type);
 		return true;
 	}	
 	

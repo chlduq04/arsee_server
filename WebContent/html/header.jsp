@@ -5,8 +5,8 @@
 <%
 	String pagename = request.getParameter("page");	
 %>
-<div>
-	<img class="main-icon" src="http://placehold.it/80x60">
+<div style="width: 92%; margin: 0 auto;">
+	<img class="main-icon" src="../images/logo_small.png">
 	<div class="header-nav">
 		<ul class="nav masthead-nav">
 			<li class="active"><a href="<%=url_manage.getToUrl("page=main")%>">Home</a></li>

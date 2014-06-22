@@ -6,25 +6,35 @@
 String func = request.getParameter("func");
 String number = request.getParameter("number");
 String company = request.getParameter("company");	
-if(func.equals("add")){
+if(func.equals("add_one")){
 	String depth = request.getParameter("n_depth");
 	String parent = request.getParameter("n_parent");
-	String index = request.getParameter("n_index");
+	String index = request.getParameter("n_indexs");
 	String text = request.getParameter("n_text");
 	String starttime = request.getParameter("n_start");
 	String endtime = request.getParameter("n_end");
 	String parent_index = request.getParameter("n_parent_index");
-	out.println(manage.insertDB(number, company, parent_index, parent, depth, index, text, starttime, endtime));
+	String type = request.getParameter("n_type");
+	out.println(manage.insertDB(number, company, parent_index, parent, depth, index, text, starttime, endtime, type));
+}else if(func.equals("add_text")){
+	String depth = request.getParameter("n_depth");
+	String parent = request.getParameter("n_parent");
+	String text = request.getParameter("n_text");
+	String starttime = request.getParameter("n_start");
+	String endtime = request.getParameter("n_end");
+	String parent_index = request.getParameter("n_parent_index");
+	out.println(manage.insertDB(number, company, parent_index, parent, depth, text, starttime, endtime));
 }else if(func.equals("del")){
-	String id = request.getParameter("n_id");
-	out.println(manage.deleteDB(id));
+	String tree_data = request.getParameter("del_tree");
+	out.println(manage.deleteDB(tree_data));
 }else if(func.equals("mod")){
 	String id = request.getParameter("n_id");
 	String text = request.getParameter("n_text");
 	String starttime = request.getParameter("n_start");
 	String endtime = request.getParameter("n_end");
 	String index = request.getParameter("n_indexs");
-	out.println(manage.modifyDB(id, text, starttime, endtime, index));	
+	String type = request.getParameter("n_type");
+	out.println(manage.modifyDB(id, text, starttime, endtime, index, type));	
 }else if(func.equals("parse")){
 	String starttime = request.getParameter("t_min");
 	String endtime = request.getParameter("t_max");
@@ -33,5 +43,13 @@ if(func.equals("add")){
 	String datas = request.getParameter("data");
 	System.out.println(manage.jsonToDatabase(datas));
 	out.println(manage.jsonToDatabase(datas));	
+}else if(func.equals("tags_result")){
+	String id = request.getParameter("n_id");
+	out.println(manage.tagsFromDatabase(id));
+}else if(func.equals("tags_insert")){
+	String id = request.getParameter("parent_id");
+	String mod_val = request.getParameter("old");
+	String new_val = request.getParameter("new");
+	out.println(manage.tagsToDatabase(id, mod_val, new_val));
 }
 %>

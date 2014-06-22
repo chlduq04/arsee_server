@@ -13,7 +13,7 @@ if(nowDateParent == null || nowDateParent == ""){
 	nowDateDepth = ""+nowDateParent.length();
 }
 text_parsing.setIsDayOrIsHoliday();
-out.println(text_parsing.getDepthText(nowDate, nowDateDepth, nowDateParent, nowDataCompany));
+out.println(text_parsing.getDetailText(nowDate, nowDateDepth, nowDateParent, nowDataCompany));
 %>
 
 

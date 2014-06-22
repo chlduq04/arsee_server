@@ -146,3 +146,150 @@ path.link {
 .ghostCircle,.activeDrag .ghostCircle {
 	display: none;
 }
+
+#svg-tree {
+	overflow: hidden;
+	border: 1px solid #a1a1a1;
+	height: 98%;
+	width: calc(100% - 2px);
+}
+
+.graph-bts {
+	float: right;
+	width: 40px;
+	height: 40px;
+	margin-right: 5px;
+	margin-left: 5px;
+	opacity: 0.4;
+}
+
+#set-tree-mod-bt {
+	cursor: pointer;
+	background-image: url('../images/manage-modify-icon.png');
+	background-size: cover;
+	position: relative;
+	z-index: 5002;
+}
+
+#set-tree-mod-bt:hover {
+	opacity: 0.4;
+}
+
+#set-tree-add-bt {
+	cursor: pointer;
+	background-image: url('../images/manage-plus-icon.png');
+	background-size: cover;
+	position: relative;
+	z-index: 5002;
+}
+
+#set-tree-del-child-bt{
+	cursor: pointer;
+	background-image: url('../images/manage-delchild-icon.png');
+	background-size: cover;
+	position: relative;
+	z-index: 5002;
+}
+
+#set-tree-add-bt:hover {
+	opacity: 0.4;
+}
+
+#set-tree-del-bt {
+	cursor: pointer;
+	background-image: url('../images/manage-delete-icon.png');
+	background-size: cover;
+	position: relative;
+	z-index: 5002;
+}
+
+#set-tree-del-bt:hover {
+	opacity: 0.4;
+}
+
+#set-tree-det-bt {
+	cursor: pointer;
+	background-image: url('../images/manage-detail-icon.png');
+	background-size: cover;
+	position: relative;
+	z-index: 5002;
+}
+
+#set-tree-analy-bt{
+	cursor: pointer;
+	background-image: url('../images/manage-analysis-icon.png');
+	background-size: cover;
+	position: relative;
+	z-index: 5002;
+}
+#set-tree-analy-bt:hover{
+	opacity: 0.4;
+}
+
+#set-tree-det-bt:hover {
+	opacity: 0.4;
+}
+
+.modal-dialog {
+	width: 540px;
+}
+
+.delete-pop-text {
+	text-align: center;
+	font-size: 30px;
+}
+
+svg {
+	width: calc(100% - 2px);
+	border: 1px solid #DEDEDE;
+}
+
+#cursor_popup_bg {
+	padding: 5px;
+	border-radius: 10px;
+	position: absolute;
+	display: none;
+	z-index: 5001;
+	background: white;
+	position: absolute;
+	border: 1px solid rgba(0, 0, 0, .2);
+	border-radius: 6px;
+	-webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+	box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+}
+
+#cursor_popup_black {
+	position: absolute;
+	display: none;
+	z-index: 5001;
+	opacity: 0.2;
+	background-color: black;
+	width: 100%;
+	height: 100%;
+}
+
+#cursor_popup {
+	position: fixed;
+	display: none;
+	z-index: 5000;
+	width: 100%;
+	top: 0;
+	height: 100%;
+	left: 0;
+}
+
+.tab-content{
+	padding : 20px 0px 0px 0px;
+}
+
+.delete-child-pop-text {
+	text-align: center;
+	font-size: 30px;
+}
+.day-change{
+	float:right;
+	width: 100px;
+}
+#tree-container-holiday{
+	display:none;
+}

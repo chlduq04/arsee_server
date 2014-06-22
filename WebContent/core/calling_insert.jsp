@@ -1,13 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="core.ParseText"%>
-<jsp:useBean id="text_parsing" class="core.ParseText" scope="session" />
+<jsp:useBean id="call_manager" class="core.Calling" scope="session" />
 <% 
-request.setCharacterEncoding("UTF-8");
 String company = request.getParameter("parsing_company");
 String number = request.getParameter("parsing_number");
-
+String target = request.getParameter("parsing_target");
+String where = request.getParameter("parsing_where");
 if(company != null && company != ""){
-	text_parsing.setIsDayOrIsHoliday();
-	out.println(text_parsing.checkUpdateByNumber(number,company));
+	call_manager.insertDB(company, target, where, number);			
 }
+
+
 %>

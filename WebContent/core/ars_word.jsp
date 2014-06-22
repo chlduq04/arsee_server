@@ -6,6 +6,7 @@ String company = request.getParameter("parsing_company");
 String number = request.getParameter("parsing_number");
 String variable = request.getParameter("parsing_variable");
 if(company != null && company != ""){
+	text_parsing.setIsDayOrIsHoliday();
 	out.println(text_parsing.checkMaxKwrdByCount(number, company, variable));	
 }
 %>
