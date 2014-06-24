@@ -14,7 +14,11 @@
 		rss.beforeFirst();
 		while(rss.next()){
 			%>
-			<img class="uploadimages" src="<%=imagedata_info.getImagePath()%><%=rss.getString(1)%>"/>
+			<div class="pics_list">
+				<img class="uploadimages" src="<%=imagedata_info.getImagePath()%><%=rss.getString(1)%>" degree="0"/>
+				<div class="uploadimage-rotate" data-toggle="tooltip" data-placement="right" title="" data-original-title="Rotate">
+				</div>		
+			</div>
 			<%
 		}
 	%>

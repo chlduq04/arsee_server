@@ -86,9 +86,10 @@ public class ParseText extends Database{
 		}
 		return result.toJSONString();		
 	}
-
+	
+	
 	public String getDepthText(String arsnum, String depth, String parent, String company) throws SQLException{
-		String checkQuery = "SELECT * FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? AND depth = ? AND parent = ? AND company = ? order by depth, parent, indexs";
+		String checkQuery = "SELECT * FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? AND depth = ? AND parent = ? AND company = ? AND starttime < now() AND endtime > now() order by depth, parent, indexs";
 		JSONObject result = new JSONObject();
 		initializeDB();
 		ResultSet rss = makePstmtExecute(checkQuery, arsnum, depth, parent, company);

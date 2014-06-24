@@ -18,30 +18,36 @@
 }
 
 .ml_clickbox {
-	height : 150px;
+	height: 150px;
 	cursor: pointer;
 	width: 76%;
 	margin: 35px auto;
 	background-color: white;
-	border: 1px solid black;
+	border: 5px solid black;
+	text-align: center;
+	border-radius: 20px;
 }
 
 .mc_clickbox {
-	height : 150px;
+	text-align: center;
+	height: 150px;
 	cursor: pointer;
 	width: 76%;
 	margin: 35px auto;
 	background-color: white;
-	border: 1px solid black;
+	border: 5px solid black;
+	border-radius: 20px;
 }
 
 .mr_clickbox {
-	height : 150px;
+	text-align: center;
+	height: 150px;
 	cursor: pointer;
 	width: 76%;
 	margin: 35px auto;
 	background-color: white;
-	border: 1px solid black;
+	border: 5px solid black;
+	border-radius: 20px;
 }
 
 .m_all_clickbt {
@@ -86,7 +92,7 @@
 	height: 30px;
 	text-align: center;
 	font-family: fantasy;
-	margin-left:4px;
+	margin-left: 4px;
 }
 
 .mc_insertcompany {
@@ -108,11 +114,28 @@
 	height: 30px;
 	text-align: center;
 	font-family: fantasy;
-	margin-left:4px;	
+	margin-left: 4px;
 }
 
 .index_main {
-	width: 400px;
+	width: 1200px;
 	margin: 0 auto;
 	overflow: hidden;
+}
+
+.ml_clickbox_img {
+	width: 100%;
+	text-align: center;
+	margin-top: 37px;
+}
+
+.mc_clickbox_img {
+	height: 90%;
+	text-align: center;
+	margin-top: 10px;
+}
+
+.mr_clickbox_img {
+	height: 100%;
+	text-align: center;
 }

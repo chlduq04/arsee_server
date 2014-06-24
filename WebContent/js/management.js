@@ -778,11 +778,9 @@ function click_add_database(){
 	$("#set-tree-change").click(function(){
 		jsondata = [];
 		aroundtree_to_json(root);
-		
 		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tree" }), {data : JSON.stringify(jsondata)}, null, function(s){
 			$("svg").remove();draw_svg();
 		}, function(e){alert(e);});
-
 	});
 
 	$("#set-mod-submit").click(function(){
@@ -799,7 +797,7 @@ function click_add_database(){
 		}else if(click_by_id["n_type"] == "star"){
 			click_by_id["n_indexs"] = "*"
 		}
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "mod" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "mod" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
 	});
 
 	$("#set-add-submit").click(function(){
@@ -818,7 +816,7 @@ function click_add_database(){
 			}else if(click_by_id["n_type"] == "star"){
 				click_by_id["n_indexs"] = "*"
 			}
-			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_one" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_one" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
 		}else if($("#addition-pop").find("li[class=active]").attr("addition-type") == "text"){
 			click_by_id["n_text"] = $("#addition-text-noidx").val();
 			click_by_id["n_start"] = $("#addition-startt-noidx").val();
@@ -832,7 +830,7 @@ function click_add_database(){
 			}else if(click_by_id["n_type"] == "star"){
 				click_by_id["n_indexs"] = "*"
 			}
-			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_text" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_text" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
 		}
 	});
 
@@ -840,7 +838,7 @@ function click_add_database(){
 		jsondata = [];
 		aroundtree_to_json(click_by_root);
 		click_by_id["del_tree"] = JSON.stringify(jsondata);
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "del" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "del" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
 	});
 	
 	$("#set-del-child-submit").click(function(){
@@ -851,7 +849,7 @@ function click_add_database(){
 			}
 		}
 		click_by_id["del_tree"] = JSON.stringify(jsondata);
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "del" }), click_by_id, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "del" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
 	});
 	
 	$("#set-tree-det-bt").click(function(){
@@ -892,7 +890,7 @@ function click_add_database(){
 		}
 		datadic["new"] = JSON.stringify(detail_new);
 		datadic["old"] = JSON.stringify(detail_old);
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tags_insert" }), datadic, null, function(s){alert(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});		
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tags_insert" }), datadic, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});		
 		
 	});
 	

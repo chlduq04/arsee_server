@@ -42,7 +42,6 @@ public class Database {
 	protected Connection conn = null;
 	protected Statement stmt = null;
 	protected PreparedStatement pstmt = null;
-	protected String absolutepath = "C:/APM_Setup/htdocs/ARSee_Server/WebContent/ImageDatas/";	
 	
 	protected String[][] Indexing = {
 			{"영번", "영 번", "0 번", "0번"},

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,19 +18,30 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 public class ImageUpload extends ImagePage{
-	public void imageFileUpload(HttpServletRequest request, String fileName){
-		String folderTypePath = "../../ImageDatas";
+
+	public void imageFileUpload(HttpServletRequest request) throws IOException, SQLException{
 		int sizeLimit = 5 * 1024 * 1024 ; // 5메가까지 제한 넘어서면 예외발생
+		System.out.println("in image!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		MultipartRequest multi;
-		try {
-			multi = new MultipartRequest(request, folderTypePath, sizeLimit, new DefaultFileRenamePolicy());
-			System.out.println("이미지 업로드 완료 파일명은? : " + fileName);	
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("이미지 업로드 실패 파일명은? : " + fileName);	
-			e.printStackTrace();
+		multi = new MultipartRequest(request, absolutepath, sizeLimit, new DefaultFileRenamePolicy());
+		Enumeration filename = multi.getFileNames();
+		String name = filename.nextElement().toString();
+		System.out.println("이미지 업로드 완료 파일명은? : " + name);
+		initializeDB();
+		ResultSet st = makePstmtExecute("SELECT * FROM  arsee_image_paths WHERE phone = ? AND path = ?", name.split(ARS_DATA_SPLIT_KEY)[0], name );
+		st.last();
+		if(st.getRow() > 0){
+			int count = Integer.parseInt(st.getString("count")) + 1;
+			makePstmtUpdate("UPDATE arsee_image_paths SET count = count + 1 WHERE phone = ? AND path = ?", name.split(ARS_DATA_SPLIT_KEY)[0], name );
+			String realn = name.substring( 0, name.lastIndexOf(".")) + count+ name.substring(name.lastIndexOf("."));
+			int r = makePstmtUpdate("INSERT INTO arsee_image_paths (`phone`, `path`, `date`, `count`) VALUES (?, ?, CURRENT_TIMESTAMP, ?)", name.split(ARS_DATA_SPLIT_KEY)[0], realn, "0");
 		}
+		else{
+			int r = makePstmtUpdate("INSERT INTO arsee_image_paths (`phone`, `path`, `date`, `count`) VALUES (?, ?, CURRENT_TIMESTAMP, ?)", name.split(ARS_DATA_SPLIT_KEY)[0], name, "0");
+		}
+		
 	}
+
 	public String fileToString(String strFileName){
 		BufferedReader bufferReader;
 		try {
@@ -40,8 +52,8 @@ public class ImageUpload extends ImagePage{
 				sb.append( line );
 			}
 			bufferReader.close();
-			
-			
+
+
 			return sb.toString();
 		} catch (FileNotFoundException e) {
 			System.out.printf("");
@@ -54,49 +66,40 @@ public class ImageUpload extends ImagePage{
 		}
 		return "";
 	}
-	
-	public void fileToByte(){
+
+	public void fileToByte() throws SQLException{
 		File file = new File(super.absolutepath+"01040750607.PNG");
-		 
-        try {           
-            // Reading a Image file from file system
-            FileInputStream imageInFile = new FileInputStream(file);
-            byte imageData[] = new byte[(int) file.length()];
-            imageInFile.read(imageData);
-            
-            // Converting Image byte array into Base64 String
-            //String imageDataString = encodeImage(imageData);
-            // Converting a Base64 String into Image byte array
-            //byte[] imageByteArray = decodeImage(imageDataString);
-             
-            // Write a image byte array into file system
-         
-            
-            String name = "01040750607";           
-            ResultSet rss = null;
-    		try {
-    			conn = DriverManager.getConnection(DB_DRIVER, DB_USER, DB_PWD);
-    			pstmt = conn.prepareStatement(getPathQuery);
-    			pstmt.setString(1, name);
-    			rss = pstmt.executeQuery();
-    		} catch (SQLException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    		
-            
-            FileOutputStream imageOutFile = new FileOutputStream(super.absolutepath+"01040750607_0.PNG");
-            imageOutFile.write(imageData);
- 
-            imageInFile.close();
-            imageOutFile.close();
- 
-            System.out.println("Image Successfully Manipulated!");
-        } catch (FileNotFoundException e) {
-            System.out.println("Image not found" + e);
-        } catch (IOException ioe) {
-            System.out.println("Exception while reading the Image " + ioe);
-        }
+
+		try {           
+			// Reading a Image file from file system
+			FileInputStream imageInFile = new FileInputStream(file);
+			byte imageData[] = new byte[(int) file.length()];
+			imageInFile.read(imageData);
+
+			// Converting Image byte array into Base64 String
+			//String imageDataString = encodeImage(imageData);
+			// Converting a Base64 String into Image byte array
+			//byte[] imageByteArray = decodeImage(imageDataString);
+
+			// Write a image byte array into file system
+
+			String name = "01040750607";           
+			ResultSet rss = null;
+			initializeDB();
+			makePstmtExecute(getPathQuery, name);
+
+			FileOutputStream imageOutFile = new FileOutputStream(super.absolutepath+"01040750607_0.PNG");
+			imageOutFile.write(imageData);
+
+			imageInFile.close();
+			imageOutFile.close();
+
+			System.out.println("Image Successfully Manipulated!");
+		} catch (FileNotFoundException e) {
+			System.out.println("Image not found" + e);
+		} catch (IOException ioe) {
+			System.out.println("Exception while reading the Image " + ioe);
+		}
 	}
 
 	public void byteToFile(){

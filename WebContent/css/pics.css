@@ -1,9 +1,9 @@
 .pics_main {
 	overflow: hidden;
-	width: 1150px;
 	height: 100%;
 	background-color: #ECFBFF;
 	padding: 25px;
+	margin-top: 100px;
 }
 
 .image_not_found {
@@ -19,4 +19,19 @@
 	width: 600px;
 	margin: 0 auto;
 	display: block;
+}
+
+.uploadimage-rotate {
+	cursor: pointer;
+	background-image: url('../images/cycle-image.png');
+	background-size: cover;
+	position: relative;
+	z-index: 5002;
+	height: 30px;
+	width: 30px;
+	float: right;
+}
+
+.pics_list{
+	overflow:hidden;
 }

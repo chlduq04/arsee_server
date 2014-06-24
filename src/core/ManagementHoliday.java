@@ -150,7 +150,7 @@ public class ManagementHoliday extends Database{
 		int i=0;
 		for( ; i<10 ; i++){
 			if(parsingResult.containsKey(""+i)){
-				ResultSet st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", company, parent+parent_index, ""+i, starttime, endtime, depth);
+				ResultSet st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE number=? AND company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", number, company, parent+parent_index, ""+i, starttime, endtime, depth);
 				st.last();
 				if(st.getRow() > 0){
 					makePstmtUpdate("UPDATE SET text = ?, count = 1 WHERE indexs = ? AND starttime = ? AND endtime = ? AND company = ? AND number = ? AND depth = ? AND parent = ? ", parsingResult.get(""+i), ""+i, starttime, endtime, company, number, depth, parent+parent_index);
@@ -161,7 +161,7 @@ public class ManagementHoliday extends Database{
 		}
 		i=100;
 		if(parsingResult.containsKey(""+i)){
-			ResultSet st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", company, parent+parent_index, ""+i, starttime, endtime, depth);
+			ResultSet st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE number=? AND company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", number, company, parent+parent_index, ""+i, starttime, endtime, depth);
 			st.last();
 			if(st.getRow() > 0){
 				makePstmtUpdate("UPDATE SET text = ?, count = 1 WHERE indexs = ? AND starttime = ? AND endtime = ? AND company = ? AND number = ? AND depth = ? AND parent = ? ", parsingResult.get(""+i), ""+i, starttime, endtime, company, number, depth, parent+parent_index);
@@ -177,17 +177,17 @@ public class ManagementHoliday extends Database{
 		initializeDB();
 		ResultSet st;
 		if(type.equals(ARS_DATA_TYPE_INFO)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_INFO+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE number=? AND company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_INFO+" = '1'", number, company, parent+parent_index, index, starttime, endtime, depth);
 		}else if(type.equals(ARS_DATA_TYPE_ERROR)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_ERROR+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE number=? AND company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_ERROR+" = '1'", number, company, parent+parent_index, index, starttime, endtime, depth);
 		}else if(type.equals(ARS_DATA_TYPE_SHARP)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_SHARP+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE number=? AND company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_SHARP+" = '1'", number, company, parent+parent_index, index, starttime, endtime, depth);
 		}else if(type.equals(ARS_DATA_TYPE_STAR)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_STAR+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE number=? AND company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_STAR+" = '1'", number, company, parent+parent_index, index, starttime, endtime, depth);
 		}else if(type.equals(ARS_DATA_TYPE_NORMAL)){
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE number=? AND company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ? AND "+ARS_DATA_TYPE_NORMAL+" = '1'", number, company, parent+parent_index, index, starttime, endtime, depth);
 		}else{
-			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ?", company, parent+parent_index, index, starttime, endtime, depth);
+			st = makePstmtExecute("SELECT id FROM arsee_ars_infos_holiday WHERE number=? AND company=? AND parent=? AND indexs=? AND starttime =? AND endtime = ? AND depth = ?", company, parent+parent_index, index, starttime, endtime, depth);
 		}
 		st.last();
 		if(st.getRow()!=0){

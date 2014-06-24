@@ -20,5 +20,6 @@
 	<classpathentry exported="true" kind="lib" path="C:/APM_Setup/htdocs/ARSee_Server/WebContent/WEB-INF/lib/parseText/org.snu.ids.ha.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebContent/WEB-INF/lib/xom-1.2.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/APM_Setup/htdocs/ARSee_Server/WebContent/WEB-INF/lib/json/json-simple-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebContent/WEB-INF/lib/servlet-api.jar"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
