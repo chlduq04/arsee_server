@@ -3,8 +3,6 @@
 <jsp:useBean id="qna_manager" class="core.Qna" scope="session" />
 <% 
 request.setCharacterEncoding("UTF-8");
-String company = request.getParameter("parsing_company");
-String number = request.getParameter("parsing_number");
 String id = request.getParameter("parsing_id");
 String text = request.getParameter("parsing_text");
 String question1 = request.getParameter("parsing_question_1"); 
@@ -12,8 +10,8 @@ String question2 = request.getParameter("parsing_question_2");
 String question3 = request.getParameter("parsing_question_3");
 String question4 = request.getParameter("parsing_question_4");
 String question5 = request.getParameter("parsing_question_5");
-if(company != null && !company.equals("")){
-	out.println(qna_manager.insertPeopleData(id, company, number, text, question1, question2, question3, question4, question5));	
+if(id != null && !id.equals("")){
+	out.println(qna_manager.insertPeopleData(id, text, question1, question2, question3, question4, question5));	
 }
 %>
 

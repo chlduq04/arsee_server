@@ -34,7 +34,7 @@ public class Database {
 	protected static String ARS_DBNAME_NOW_INFO_KEYWORD = ARS_DBNAME_DAY_INFO_KEYWORD;
 	
 	protected final static String AESKEY = "arseekeysetforsession";
-	protected final static boolean DEBUG_MODE = true;
+	protected final static boolean DEBUG_MODE = false;
 	protected final static String DB_DRIVER = "jdbc:mysql://localhost:3306/arsee";
 	protected final static String DB_USER= "root";
 	protected final static String DB_PWD= "arseejd";
@@ -54,6 +54,19 @@ public class Database {
 			{"칠번", "칠 번", "7 번", "7번"},
 			{"팔번", "팔 번", "8 번", "8번"},
 			{"구번", "구 번", "9 번", "9번"}
+	};
+	
+	protected String[][] SubIndexing = {
+			{"영반", "영반인", "0 반"},
+			{"일반", "일반인", "1 반"},
+			{"이반", "이반인", "2 반"},
+			{"삼반", "삼반인", "3 반"},
+			{"사반", "사반인", "4 반"},
+			{"오반", "오반인", "5 반"},
+			{"육반", "육반인", "6 반"},
+			{"칠반", "칠반인", "7 반"},
+			{"팔반", "팔반인", "8 반"},
+			{"구반", "구반인", "9 반"},
 	};
 
 

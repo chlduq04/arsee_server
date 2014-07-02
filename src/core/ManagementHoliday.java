@@ -90,10 +90,10 @@ public class ManagementHoliday extends Database{
         return array.toJSONString();
 	}
 
-	public String findJson(String number, String company, String starttime, String endtime) throws SQLException{
+	public String findJson(String number, String company, String starttime) throws SQLException{
 		mjd = MakeJsonData.getInstance(company);
 		initializeDB();
-		ResultSet rs = makePstmtExecute("SELECT * FROM arsee_ars_infos_holiday WHERE number = ? AND company = ? AND starttime >= ? AND endtime <= ? order by depth , parent, indexs", number, company, starttime, endtime);
+		ResultSet rs = makePstmtExecute("SELECT * FROM arsee_ars_infos_holiday WHERE number = ? AND company = ? AND starttime <= ? AND endtime > ? order by depth , parent, indexs", number, company, starttime, starttime);
 		mjd.initParsingData(company);
 		while(rs.next()){
 //			if(Integer.parseInt(rs.getString("indexs")) >= 0 && Integer.parseInt(rs.getString("indexs")) != 100){

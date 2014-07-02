@@ -37,8 +37,7 @@ if(func.equals("add_one")){
 	out.println(manage.modifyDB(id, text, starttime, endtime, index, type));	
 }else if(func.equals("parse")){
 	String starttime = request.getParameter("t_min");
-	String endtime = request.getParameter("t_max");
-	out.println(manage.findJson( number, company, starttime, endtime));
+	out.println(manage.findJson( number, company, starttime));
 }else if(func.equals("tree")){
 	String datas = request.getParameter("data");
 	System.out.println(manage.jsonToDatabase(datas));

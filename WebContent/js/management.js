@@ -1,7 +1,7 @@
+var color_variation = ["#B4B1FF", "#8985FF", "#2D24FF", "#060097", "#040074"];
 var find_company_ajax = $(".management_main").attr("company");
 var find_number_ajax = $(".management_main").attr("number");
 var find_by_min_time = $("#starttm").val();
-var find_by_max_time = $("#endtm").val();
 var jsondata = [];
 var click_by_id = {};
 var root;
@@ -63,7 +63,7 @@ function draw_svg(){
 	              "#9B2C67", "#982B9A", "#692DA7", "#5725AA", "#4823AF",
 	              "#d7b5d8","#dd1c77","#5A0C7A","#5A0C7A"];
 
-	treeJSON = d3.json(makeGetUrl("method/management-"+day_or_holiday+".jsp",{number:find_number_ajax,company:find_company_ajax,func:"parse",t_min:find_by_min_time,t_max:find_by_max_time}), function(error, treeData) {
+	treeJSON = d3.json(makeGetUrl("method/management-"+day_or_holiday+".jsp",{number:find_number_ajax,company:find_company_ajax,func:"parse",t_min:find_by_min_time}), function(error, treeData) {
 		// Get JSON data
 		// Calculate total nodes, max label length
 		var maxLabelLengthLimit = 40;
@@ -486,7 +486,6 @@ function draw_svg(){
 					$("#modify-text").val("");
 					$("#modify-startt").val("");
 					$("#modify-endt").val("");
-
 					$("#addition-text").val("");
 					$("#addition-startt").val("");
 					$("#addition-endt").val("");
@@ -649,11 +648,22 @@ function draw_svg(){
 					return "#0E53A7";
 				}else if(d.target.type == "sharp"){
 					return "#4512AE";
-				}	
-				return "#1A1EB2";
+				}else{
+					if(d.target.count/10000 >= 1){
+						return color_variation[4];
+					}else if(d.target.count/1000 >= 1){
+						return color_variation[3];
+					}else if(d.target.count/100 >= 1){
+						return color_variation[2];
+					}else if(d.target.count/10 >= 1){
+						return color_variation[1];
+					}else{
+						return color_variation[0];
+					}
+				}
 			})
 			.attr("stroke-width", function (d,i) {
-				return d.target.count/2;
+				return d.target.count%30;
 			})
 			.attr("stroke-opacity",function(d,i){
 				return 0.3;
@@ -715,8 +725,7 @@ function draw_svg(){
 function click_search_database(){
 	$("#find-time-min-max").bind("click",function(){
 		find_by_min_time = $("#starttm").val();
-		find_by_max_time = $("#endtm").val();
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "parse" }), {t_min : find_by_min_time, t_max : find_by_max_time}, null, function(s){$("svg").remove();draw_svg();}, function(e){alert(e);});
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "parse" }), {t_min : find_by_min_time}, null, function(s){$("svg").remove();draw_svg();}, function(e){alert(e);});
 	});
 }
 

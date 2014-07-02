@@ -81,41 +81,10 @@ out.println(checkupdate);
 <div>업데이트</div>
 <div style="border:1px solid black;padding:5px;">
 	<form method="POST" action="textParsing.jsp">
-		<label>텍스트 : <input type="text" value="" name="parsing_text"></input></label><br />
+		<label>텍스트 : <input type="text" value="" name="parsing_text" style="width:90%;"></input></label><br />
 		<label>ARS 번호 : <input type="text" value="114" name="parsing_number"></input></label><br />
 		<label>ARS 이전 번호 : <input type="text" value="" name="parsing_parent"></input></label><br />
 		<label>통신사 : <input type="text" value="kt" name="parsing_company"></input></label><br />
-		<input type="submit"></input>
-	</form>
-</div>
-<br />
-<div>불러오기</div>
-<div style="border:1px solid black;padding:5px;">
-	<form method="POST" action="textParsing.jsp">
-		<label>ARS 번호 : <input type="text" value="114" name="get_text_by_number"></input></label><br />
-		<label>ARS 이전 번호 : <input type="text" value="" name="get_text_by_number_parent"></input></label><br />
-		<label>통신사 : <input type="text" value="olleh" name="parsing_company"></label>
-		<input type="submit"></input>
-	</form>
-</div>
-<br />
-
-<div>상태 확인</div>
-<div style="border:1px solid black;padding:5px;">
-	<form method="POST" action="textParsing.jsp">
-		<input type="text" value="olleh" name="now_ars_update_company"></input>
-		<input type="text" value="114" name="now_ars_update_number"></input>
-		<input type="submit"></input>
-	</form>
-</div>
-<br />
-
-<div>검색어 찾기</div>
-<div style="border:1px solid black;padding:5px;">
-	<form method="POST" action="textParsing.jsp">
-		<label>ARS 번호 : <input type="text" value="0000" name="find_ars_table"></input></label><br />
-		<label>ARS 회사 : <input type="text" value="olleh" name="find_ars_company"></input></label><br />
-		<label>찾고자 하는 단어 : <input type="text" value="어린이" name="find_ars_table_variable"></input></label><br />
 		<input type="submit"></input>
 	</form>
 </div>

@@ -65,26 +65,9 @@
 	}
 %>
 <div id="body" class="login_main">
-	<form id="form-user" class="form-horizontal" role="form"
-		action="layout.jsp?page=login" method="POST">
-		<input type="hidden" name="method" value="user">
-		<h2 class="user-form form-title">User</h2>
-		<div class="form-div">
-			<div class="form-group">
-				<label for="inputNumber" class="col-sm-2 control-label">Phone</label>
-				<div class="col-sm-10">
-					<input name="user_number" type="text" class="form-control"
-						id="inputNumber" placeholder="Phone number">
-				</div>
-			</div>
-
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-default">Login User</button>
-				</div>
-			</div>
-		</div>
-	</form>
+	<div id="container">
+		<div id="holder"></div>
+	</div>
 	<form id="form-manager" class="form-horizontal" role="form"
 		action="layout.jsp?page=login" method="POST">
 		<input type="hidden" name="method" value="manager">

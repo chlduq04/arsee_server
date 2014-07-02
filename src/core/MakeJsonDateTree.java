@@ -53,7 +53,6 @@ public class MakeJsonDateTree {
 	public void makeChildToJsonArray(){
 		if(children.size() > 0){
 			arr = new JSONArray();
-			System.out.println(obj.toJSONString());
 			for(String key : children.keySet()){
 				arr.add(children.get(key).obj);
 			}

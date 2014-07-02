@@ -14,10 +14,10 @@ public class PageInfoResource {
 
 	public void setPages(){
 		PAGES.put("main", new PageInfo("main",page_count++));
-		PAGES.put("login", new PageInfo("login",page_count++));
+		PAGES.put("login", new PageInfo("login",page_count++,"d3d.js"));
 		PAGES.put("logout", new PageInfo("logout",page_count++));
 		PAGES.put("index", new PageInfo("index",page_count++));
-		PAGES.put("qna", new PageInfo("qna",page_count++));
+		PAGES.put("qna", new PageInfo("qna",page_count++,"d3.js","d3.layout.js"));
 		PAGES.put("pics", new PageInfo("pics",page_count++));
 		PAGES.put("companys", new PageInfo("companys",page_count++));
 		PAGES.put("error", new PageInfo("error",page_count++));

@@ -1,43 +1,83 @@
-<%@page import="java.sql.ResultSet"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@page import="core.Qna"%>
+<%@page import="java.sql.ResultSet"%>
 <jsp:useBean id="qna_manage" class="core.Qna" scope="session" />
 <%
 	request.setCharacterEncoding("UTF-8");
 	String method = request.getParameter("method");
-	if(method != null && method != ""){
-		if(method.equals("text")){
-			qna_manage.insertIsTextDB(request.getParameter("number"), request.getParameter("company"), request.getParameter("question"));
-		}
-		else if(method.equals("radio")){
-			qna_manage.insertIsRadioDB(request.getParameter("number"), request.getParameter("company"), request.getParameter("question"), request.getParameter("check1"), request.getParameter("check2"), request.getParameter("check3"), request.getParameter("check4"), request.getParameter("check5"));
-		}
-		else if(method.equals("point")){
-			qna_manage.insertIsPointDB(request.getParameter("number"), request.getParameter("company"), request.getParameter("question"), request.getParameter("check1"), request.getParameter("check2"), request.getParameter("check3"), request.getParameter("check4"), request.getParameter("check5"));	
-		}
-		else if(method.equals("check")){
-			qna_manage.insertIsCheckDB(request.getParameter("number"), request.getParameter("company"), request.getParameter("question"), request.getParameter("check1"), request.getParameter("check2"), request.getParameter("check3"), request.getParameter("check4"), request.getParameter("check5"));
+	if (method != null && method != "") {
+		if (method.equals("text")) {
+			qna_manage.insertIsTextDB(request.getParameter("number"),
+					request.getParameter("company"),
+					request.getParameter("question"));
+		} else if (method.equals("radio")) {
+			qna_manage.insertIsRadioDB(request.getParameter("number"),
+					request.getParameter("company"),
+					request.getParameter("question"),
+					request.getParameter("check1"),
+					request.getParameter("check2"),
+					request.getParameter("check3"),
+					request.getParameter("check4"),
+					request.getParameter("check5"));
+		} else if (method.equals("point")) {
+			qna_manage.insertIsPointDB(request.getParameter("number"),
+					request.getParameter("company"),
+					request.getParameter("question"),
+					request.getParameter("check1"),
+					request.getParameter("check2"),
+					request.getParameter("check3"),
+					request.getParameter("check4"),
+					request.getParameter("check5"));
+		} else if (method.equals("check")) {
+			qna_manage.insertIsCheckDB(request.getParameter("number"),
+					request.getParameter("company"),
+					request.getParameter("question"),
+					request.getParameter("check1"),
+					request.getParameter("check2"),
+					request.getParameter("check3"),
+					request.getParameter("check4"),
+					request.getParameter("check5"));
 		}
 	}
-
 	String pagename = request.getParameter("page");
 	String number = request.getParameter("number");
 	String company = request.getParameter("company");
 
-	if (number == null || company == null || qna_manage.isEmpty(company, number)) {
+	if (number == null || company == null) {
 		pageContext.forward("/layout.jsp?page=index");
 	}
-	ResultSet rs = qna_manage.findDB(company, number);
+	
 %>
+<div id="">
+	<!-- Modal -->
+	<div class="modal fade" id="result-pop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Result</h4>
+
+				</div>
+				<div class="modal-body result-pop-text">
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="set-del-submit" data-dismiss="modal"
+						class="btn btn-primary">Yes</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="">
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-hidden="true">&times;</button>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h4 class="modal-title" id="myModalLabel">Q&A Information</h4>
 
 				</div>
@@ -52,41 +92,53 @@
 					<div class="tab-content">
 						<div class="tab-pane active" id="qna-point-tab">
 							<div>
-								<form class="form-horizontal" role="form" method="POST" action="layout.jsp?page=qna">
+								<form class="form-horizontal" role="form" method="POST"
+									action="layout.jsp?page=qna">
 									<div class="form-group">
 										<label for="inputQuestion" class="col-sm-2 control-label">Question?</label>
 										<div class="col-sm-10">
-											<input name="question" type="text" class="form-control" id="inputQuestion" placeholder="Question">
+											<input name="question" type="text" class="form-control"
+												id="inputQuestion" placeholder="Question">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck1" class="col-sm-2 control-label">Number 1</label>
+										<label for="inputcheck1" class="col-sm-2 control-label">Number
+											1</label>
 										<div class="col-sm-10">
-											<input name="check1" type="text" class="form-control" id="inputcheck1" placeholder="Subscription">
+											<input name="check1" type="text" class="form-control"
+												id="inputcheck1" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck2" class="col-sm-2 control-label">Number 2</label>
+										<label for="inputcheck2" class="col-sm-2 control-label">Number
+											2</label>
 										<div class="col-sm-10">
-											<input name="check2" type="text" class="form-control" id="inputcheck2" placeholder="Subscription">
+											<input name="check2" type="text" class="form-control"
+												id="inputcheck2" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck3" class="col-sm-2 control-label">Number 3</label>
+										<label for="inputcheck3" class="col-sm-2 control-label">Number
+											3</label>
 										<div class="col-sm-10">
-											<input name="check3" type="text" class="form-control" id="inputcheck3" placeholder="Subscription">
+											<input name="check3" type="text" class="form-control"
+												id="inputcheck3" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck4" class="col-sm-2 control-label">Number 4</label>
+										<label for="inputcheck4" class="col-sm-2 control-label">Number
+											4</label>
 										<div class="col-sm-10">
-											<input name="check4" type="text" class="form-control" id="inputcheck4" placeholder="Subscription">
+											<input name="check4" type="text" class="form-control"
+												id="inputcheck4" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck5" class="col-sm-2 control-label">Number 5</label>
+										<label for="inputcheck5" class="col-sm-2 control-label">Number
+											5</label>
 										<div class="col-sm-10">
-											<input name="check5" type="text" class="form-control" id="inputcheck5" placeholder="Subscription">
+											<input name="check5" type="text" class="form-control"
+												id="inputcheck5" placeholder="Subscription">
 										</div>
 									</div>
 
@@ -95,19 +147,21 @@
 											<button type="submit" class="btn btn-primary">Save</button>
 										</div>
 									</div>
-									<input type="hidden" name="method" value = "point"/>
-									<input type="hidden" name="company" value = "<%=company%>"/>
-									<input type="hidden" name="number" value = "<%=number%>"/>
+									<input type="hidden" name="method" value="point" /> <input
+										type="hidden" name="company" value="<%=company%>" /> <input
+										type="hidden" name="number" value="<%=number%>" />
 								</form>
 							</div>
 						</div>
 						<div class="tab-pane" id="qna-text-tab">
 							<div>
-							<form class="form-horizontal" role="form" method="POST" action="layout.jsp?page=qna">
+								<form class="form-horizontal" role="form" method="POST"
+									action="layout.jsp?page=qna">
 									<div class="form-group">
 										<label for="inputQuestion" class="col-sm-2 control-label">Question?</label>
 										<div class="col-sm-10">
-											<input name="question" type="text" class="form-control" id="inputQuestion" placeholder="Question">
+											<input name="question" type="text" class="form-control"
+												id="inputQuestion" placeholder="Question">
 										</div>
 									</div>
 									<div class="form-group">
@@ -115,50 +169,62 @@
 											<button type="submit" class="btn btn-primary">Save</button>
 										</div>
 									</div>
-									<input type="hidden" name="method" value = "text"/>
-									<input type="hidden" name="company" value = "<%=company%>"/>
-									<input type="hidden" name="number" value = "<%=number%>"/>
-									
+									<input type="hidden" name="method" value="text" /> <input
+										type="hidden" name="company" value="<%=company%>" /> <input
+										type="hidden" name="number" value="<%=number%>" />
+
 								</form>
 							</div>
 						</div>
 						<div class="tab-pane" id="qna-radio-tab">
 							<div>
-							<form class="form-horizontal" role="form" method="POST" action="layout.jsp?page=qna">
+								<form class="form-horizontal" role="form" method="POST"
+									action="layout.jsp?page=qna">
 									<div class="form-group">
 										<label for="inputQuestion" class="col-sm-2 control-label">Question?</label>
 										<div class="col-sm-10">
-											<input name="question" type="text" class="form-control" id="inputQuestion" placeholder="Question">
+											<input name="question" type="text" class="form-control"
+												id="inputQuestion" placeholder="Question">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck1" class="col-sm-2 control-label">Number 1</label>
+										<label for="inputcheck1" class="col-sm-2 control-label">Number
+											1</label>
 										<div class="col-sm-10">
-											<input name="check1" type="text" class="form-control" id="inputcheck1" placeholder="Subscription">
+											<input name="check1" type="text" class="form-control"
+												id="inputcheck1" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck2" class="col-sm-2 control-label">Number 2</label>
+										<label for="inputcheck2" class="col-sm-2 control-label">Number
+											2</label>
 										<div class="col-sm-10">
-											<input name="check2" type="text" class="form-control" id="inputcheck2" placeholder="Subscription">
+											<input name="check2" type="text" class="form-control"
+												id="inputcheck2" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck3" class="col-sm-2 control-label">Number 3</label>
+										<label for="inputcheck3" class="col-sm-2 control-label">Number
+											3</label>
 										<div class="col-sm-10">
-											<input name="check3" type="text" class="form-control" id="inputcheck3" placeholder="Subscription">
+											<input name="check3" type="text" class="form-control"
+												id="inputcheck3" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck4" class="col-sm-2 control-label">Number 4</label>
+										<label for="inputcheck4" class="col-sm-2 control-label">Number
+											4</label>
 										<div class="col-sm-10">
-											<input name="check4" type="text" class="form-control" id="inputcheck4" placeholder="Subscription">
+											<input name="check4" type="text" class="form-control"
+												id="inputcheck4" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck5" class="col-sm-2 control-label">Number 5</label>
+										<label for="inputcheck5" class="col-sm-2 control-label">Number
+											5</label>
 										<div class="col-sm-10">
-											<input name="check5" type="text" class="form-control" id="inputcheck5" placeholder="Subscription">
+											<input name="check5" type="text" class="form-control"
+												id="inputcheck5" placeholder="Subscription">
 										</div>
 									</div>
 
@@ -167,49 +233,61 @@
 											<button type="submit" class="btn btn-primary">Save</button>
 										</div>
 									</div>
-									<input type="hidden" name="method" value = "radio"/>
-									<input type="hidden" name="company" value = "<%=company%>"/>
-									<input type="hidden" name="number" value = "<%=number%>"/>
+									<input type="hidden" name="method" value="radio" /> <input
+										type="hidden" name="company" value="<%=company%>" /> <input
+										type="hidden" name="number" value="<%=number%>" />
 								</form>
 							</div>
 						</div>
 						<div class="tab-pane" id="qna-check-tab">
 							<div>
-							<form class="form-horizontal" role="form" method="POST" action="layout.jsp?page=qna">
+								<form class="form-horizontal" role="form" method="POST"
+									action="layout.jsp?page=qna">
 									<div class="form-group">
 										<label for="inputQuestion" class="col-sm-2 control-label">Question?</label>
 										<div class="col-sm-10">
-											<input name="question" type="text" class="form-control" id="inputQuestion" placeholder="Question">
+											<input name="question" type="text" class="form-control"
+												id="inputQuestion" placeholder="Question">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck1" class="col-sm-2 control-label">Number 1</label>
+										<label for="inputcheck1" class="col-sm-2 control-label">Number
+											1</label>
 										<div class="col-sm-10">
-											<input name="check1" type="text" class="form-control" id="inputcheck1" placeholder="Subscription">
+											<input name="check1" type="text" class="form-control"
+												id="inputcheck1" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck2" class="col-sm-2 control-label">Number 2</label>
+										<label for="inputcheck2" class="col-sm-2 control-label">Number
+											2</label>
 										<div class="col-sm-10">
-											<input name="check2" type="text" class="form-control" id="inputcheck2" placeholder="Subscription">
+											<input name="check2" type="text" class="form-control"
+												id="inputcheck2" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck3" class="col-sm-2 control-label">Number 3</label>
+										<label for="inputcheck3" class="col-sm-2 control-label">Number
+											3</label>
 										<div class="col-sm-10">
-											<input name="check3" type="text" class="form-control" id="inputcheck3" placeholder="Subscription">
+											<input name="check3" type="text" class="form-control"
+												id="inputcheck3" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck4" class="col-sm-2 control-label">Number 4</label>
+										<label for="inputcheck4" class="col-sm-2 control-label">Number
+											4</label>
 										<div class="col-sm-10">
-											<input name="check4" type="text" class="form-control" id="inputcheck4" placeholder="Subscription">
+											<input name="check4" type="text" class="form-control"
+												id="inputcheck4" placeholder="Subscription">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="inputcheck5" class="col-sm-2 control-label">Number 5</label>
+										<label for="inputcheck5" class="col-sm-2 control-label">Number
+											5</label>
 										<div class="col-sm-10">
-											<input name="check5" type="text" class="form-control" id="inputcheck5" placeholder="Subscription">
+											<input name="check5" type="text" class="form-control"
+												id="inputcheck5" placeholder="Subscription">
 										</div>
 									</div>
 
@@ -218,10 +296,10 @@
 											<button type="submit" class="btn btn-primary">Save</button>
 										</div>
 									</div>
-									<input type="hidden" name="method" value = "check"/>
-									<input type="hidden" name="company" value = "<%=company%>"/>
-									<input type="hidden" name="number" value = "<%=number%>"/>
-									
+									<input type="hidden" name="method" value="check" /> <input
+										type="hidden" name="company" value="<%=company%>" /> <input
+										type="hidden" name="number" value="<%=number%>" />
+
 								</form>
 							</div>
 						</div>
@@ -236,16 +314,22 @@
 	</div>
 </div>
 <div id="body" class="qna_main" company="<%=company%>" number="<%=number%>">
-	<%
-		if (session.getAttribute("type") != null || session.getAttribute("type").equals("manager")){
-		int inputCount = 1;
+	<% 	
+	int inputCount = 1;
+	ResultSet rs = qna_manage.findDB(company, number);
 		while (rs.next()) {
 	%>
-	
+
 	<ul class="qna-list-<%=rs.getString("id")%>">
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
-				<button type="input" class="btn btn-default qna-delete del-<%=rs.getString("id")%>"
+				<button type="input"
+					class="btn btn-default qna-result res-<%=rs.getString("id")%>"
+					id="<%=rs.getString("id")%>_res" data-toggle="modal"
+					data-target="#result-pop">Result</button>
+
+				<button type="input"
+					class="btn btn-default qna-delete del-<%=rs.getString("id")%>"
 					id="<%=rs.getString("id")%>">Delete</button>
 			</div>
 		</div>
@@ -260,15 +344,15 @@
 		<li>
 			<%
 				for (int i = 1; i < 6; i++) {
-								if (rs.getString("question" + i) == null
-										|| rs.getString("question" + i).equals("")) {
-									break;
-								}
+							if (rs.getString("question" + i) == null
+									|| rs.getString("question" + i).equals("")) {
+								break;
+							}
 			%>
 			<div class="radio">
 				<label> <input type="radio"
-					name="qna-<%=inputCount%>-optionsRadios"
-					id="optionsRadios5" value="option5"><%=rs.getString("question" + i)%>
+					name="qna-<%=inputCount%>-optionsRadios" id="optionsRadios5"
+					value="option5"><%=rs.getString("question" + i)%>
 				</label>
 			</div> <%
  	}
@@ -284,10 +368,10 @@
 		<li>
 			<%
 				for (int i = 1; i < 6; i++) {
-								if (rs.getString("question" + i) == null
-										|| rs.getString("question" + i).equals("")) {
-									break;
-								}
+							if (rs.getString("question" + i) == null
+									|| rs.getString("question" + i).equals("")) {
+								break;
+							}
 			%> <label class="checkbox-inline"> <input
 				name="qna-<%=inputCount%>-checkbox-1" type="checkbox"
 				id="inlineCheckbox1" value="option1"><%=rs.getString("question" + i)%>
@@ -305,15 +389,15 @@
 		<li>
 			<%
 				for (int i = 1; i < 6; i++) {
-								if (rs.getString("question" + i) == null
-										|| rs.getString("question" + i).equals("")) {
-									break;
-								}
+							if (rs.getString("question" + i) == null
+									|| rs.getString("question" + i).equals("")) {
+								break;
+							}
 			%>
 			<div class="radio">
 				<label> <input type="radio"
-					name="qna-<%=inputCount%>-selectsRadios"
-					id="optionsRadios1" value="option1" checked> <%=rs.getString("question" + i)%>
+					name="qna-<%=inputCount%>-selectsRadios" id="optionsRadios1"
+					value="option1" checked> <%=rs.getString("question" + i)%>
 				</label>
 			</div> <%
  	}
@@ -337,10 +421,11 @@
 		%>
 		<li class="divide-line"></li>
 	</ul>
-	<input type="hidden" name="qna-<%=inputCount%>-inputid" value="<%=rs.getString("id")%>" />
+	<input type="hidden" name="qna-<%=inputCount%>-inputid"
+		value="<%=rs.getString("id")%>" />
 	<%
 		inputCount++;
-			}
+		}
 	%>
 	<input type="hidden" name="input-count" value="<%=inputCount%>" />
 	<div class="form-group">
@@ -350,7 +435,6 @@
 		</div>
 	</div>
 	<%
-		}
 	%>
 </div>
 

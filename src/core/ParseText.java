@@ -18,6 +18,7 @@ import org.snu.ids.ha.util.Timer;
 public class ParseText extends Database{
 	String string;
 	MorphemeAnalyzer ma;
+	
 
 	public int returnIndex(String argu){
 		for(int i=0;i<Indexing.length;i++){
@@ -43,12 +44,36 @@ public class ParseText extends Database{
 				}
 			}
 			if(!ch){
+				if(map.get("0") == null && map.get("1") == null && map.get("2") == null && map.get("3") == null && map.get("4") == null && map.get("5") == null && map.get("6") == null && map.get("7") == null && map.get("8") == null && map.get("9") == null){
+					for(int i=0;i<SubIndexing.length;i++){
+						for(int j=0;j<SubIndexing[0].length;j++){
+							if(text.indexOf(SubIndexing[i][j]) != -1){
+								map.put(""+i, indexingNumber(map, text.split(SubIndexing[i][j])[0].trim()));
+								text = text.split(SubIndexing[i][j])[1].trim();
+								ch = true;
+							}
+						}
+					}
+				}else{
+					for(int i=1;i<10;i++){
+						if(map.get(""+i) == null){
+							if(map.get(""+(i+1)) != null){
+								String value = map.get(""+(i+1));
+								for(int j=0 ; j<SubIndexing[i].length ; j++){
+									if(value.indexOf(SubIndexing[i][j]) != -1){
+										map.put(""+i, value.split(SubIndexing[i][j])[0].trim());									
+										map.put(""+(i+1), value.split(SubIndexing[i][j])[1].trim());									
+									}
+								}
+							}
+						}
+					}
+				}
 				break;
 			}
 		}		
 		return text;
 	}
-
 
 	public String getAllText(String arsnum) throws SQLException{
 		String checkQuery = "SELECT * FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? order by depth, parent, indexs";

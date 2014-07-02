@@ -5,7 +5,7 @@
 
 .qna-list-name {
 	float: left;
-	margin-right:10px;
+	margin-right: 10px;
 }
 
 .qna-list-comment {
@@ -26,8 +26,8 @@ ul {
 	overflow: hidden;
 }
 
-li{
-	overflow:hidden;
+li {
+	overflow: hidden;
 }
 
 .divide-line {
@@ -38,13 +38,24 @@ li{
 	margin-top: 25px;
 }
 
-.qna-submit{
-	width:20%;
-	float:right;
+.qna-submit {
+	width: 20%;
+	float: right;
 }
 
-.form-group{
-	margin-top:10px;
-	overflow:hidden;
+.form-group {
+	margin-top: 10px;
+	overflow: hidden;
 	text-align: right;
+}
+
+
+label {
+}
+.modal-body{
+	text-align: center;
+}
+
+svg{
+	height:250px;
 }

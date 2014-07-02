@@ -2,5 +2,6 @@ eclipse.preferences.version=1
 encoding//WebContent/js=UTF-8
 encoding//WebContent/js/d3.js=EUC-KR
 encoding//WebContent/js/management.js=UTF-8
+encoding//src/core/AudioManager.java=UTF-8
 encoding//src/core/Calling.java=UTF-8
 encoding/<project>=UTF-8

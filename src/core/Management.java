@@ -48,7 +48,7 @@ public class Management extends Database{
 	public void findKeyword(){
 
 	}
-	
+
 	public String tagsFromDatabase(String id) throws SQLException{
 		initializeDB();
 		JSONObject result = new JSONObject();
@@ -58,63 +58,61 @@ public class Management extends Database{
 		}
 		return result.toJSONString();
 	}
-	
+
 	public String tagsToDatabase(String id, String mod_val, String new_val) throws SQLException, ParseException{
 		initializeDB();
 		JSONParser parser=new JSONParser();
 		Object obj = parser.parse(new_val);
 		JSONArray array = (JSONArray)obj;
-        for(int i=0 ; i < array.size() ; i++){
-        	makePstmtUpdate("INSERT INTO arsee_ars_other_infos (`name_id`, `text`) VALUES (?, ?)", id, array.get(i).toString());
-        }
-        
+		for(int i=0 ; i < array.size() ; i++){
+			makePstmtUpdate("INSERT INTO arsee_ars_other_infos (`name_id`, `text`) VALUES (?, ?)", id, array.get(i).toString());
+		}
+
 		parser=new JSONParser();
 		obj = parser.parse(mod_val);
-        array = (JSONArray)obj;
-        for(int i=0;i<array.size();i++){
-        	JSONObject json = (JSONObject)array.get(i);
-        	makePstmtUpdate("UPDATE arsee_ars_other_infos SET text = ? WHERE id = ?", json.get("text").toString(), json.get("id").toString());
-        }
+		array = (JSONArray)obj;
+		for(int i=0;i<array.size();i++){
+			JSONObject json = (JSONObject)array.get(i);
+			makePstmtUpdate("UPDATE arsee_ars_other_infos SET text = ? WHERE id = ?", json.get("text").toString(), json.get("id").toString());
+		}
 		return "수정 성공";
 	}
-	
+
 	public String jsonToDatabase(String data) throws ParseException, SQLException{
 		initializeDB();
 		JSONParser parser=new JSONParser();
 		Object obj = parser.parse(data);
-        JSONArray array = (JSONArray)obj;
-        for(int i=0;i<array.size();i++){
-        	JSONObject json = (JSONObject)array.get(i);
-        	makePstmtUpdate("UPDATE arsee_ars_infos SET depth = ?, parent = ? WHERE id = ?", json.get("depth").toString(), json.get("parent").toString(), json.get("id").toString());
-        }
-        return array.toJSONString();
+		JSONArray array = (JSONArray)obj;
+		for(int i=0;i<array.size();i++){
+			JSONObject json = (JSONObject)array.get(i);
+			makePstmtUpdate("UPDATE arsee_ars_infos SET depth = ?, parent = ? WHERE id = ?", json.get("depth").toString(), json.get("parent").toString(), json.get("id").toString());
+		}
+		return array.toJSONString();
 	}
 
-	public String findJson(String number, String company, String starttime, String endtime) throws SQLException{
+	public String findJson(String number, String company, String starttime) throws SQLException{
 		mjd = MakeJsonData.getInstance(company);
 		initializeDB();
-		ResultSet rs = makePstmtExecute("SELECT * FROM arsee_ars_infos WHERE number = ? AND company = ? AND starttime >= ? AND endtime <= ? order by depth , parent, indexs", number, company, starttime, endtime);
+		ResultSet rs = makePstmtExecute("SELECT * FROM arsee_ars_infos WHERE number = ? AND company = ? AND starttime <= ? AND endtime > ? order by depth , parent, indexs", number, company, starttime, starttime);
 		mjd.initParsingData(company);
 		while(rs.next()){
-//			if(Integer.parseInt(rs.getString("indexs")) >= 0 && Integer.parseInt(rs.getString("indexs")) != 100){
-				String value="none";
-				if(rs.getString(ARS_DATA_TYPE_INFO) != null){
-					value = (ARS_DATA_TYPE_INFO);
-				}
-				else if(rs.getString(ARS_DATA_TYPE_ERROR) != null){
-					value = (ARS_DATA_TYPE_ERROR);
-				} 
-				else if(rs.getString(ARS_DATA_TYPE_SHARP) != null){
-					value = (ARS_DATA_TYPE_SHARP);					
-				} 
-				else if(rs.getString(ARS_DATA_TYPE_STAR) != null){
-					value = (ARS_DATA_TYPE_STAR);					
-				}
-				else if(rs.getString(ARS_DATA_TYPE_NORMAL) != null){
-					value = (ARS_DATA_TYPE_NORMAL);					
-				}
-				mjd.parsingData(rs.getString("id"),rs.getString("text"),rs.getString("depth"),rs.getString("parent"),rs.getString("indexs"), company, rs.getString("starttime"), rs.getString("endtime"), rs.getString("count"), value);
-//			}				
+			String value="none";
+			if(rs.getString(ARS_DATA_TYPE_INFO) != null){
+				value = (ARS_DATA_TYPE_INFO);
+			}
+			else if(rs.getString(ARS_DATA_TYPE_ERROR) != null){
+				value = (ARS_DATA_TYPE_ERROR);
+			} 
+			else if(rs.getString(ARS_DATA_TYPE_SHARP) != null){
+				value = (ARS_DATA_TYPE_SHARP);					
+			} 
+			else if(rs.getString(ARS_DATA_TYPE_STAR) != null){
+				value = (ARS_DATA_TYPE_STAR);					
+			}
+			else if(rs.getString(ARS_DATA_TYPE_NORMAL) != null){
+				value = (ARS_DATA_TYPE_NORMAL);					
+			}
+			mjd.parsingData(rs.getString("id"),rs.getString("text"),rs.getString("depth"),rs.getString("parent"),rs.getString("indexs"), company, rs.getString("starttime"), rs.getString("endtime"), rs.getString("count"), value);
 		}
 		return mjd.toJson().toJSONString();
 	}
@@ -143,6 +141,7 @@ public class Management extends Database{
 		}
 		return "";
 	}
+	
 	public String insertDB(String number, String company, String parent_index, String parent, String depth, String text, String starttime, String endtime) throws Exception{
 		initializeDB();
 		//조회하실 전화번호를 지역번호와 함께 누른후 우물정자를 눌러주십시오 전화번호를 모르시는 경우 우물정자를 눌러주십시오
@@ -169,7 +168,7 @@ public class Management extends Database{
 				makePstmtUpdate("INSERT INTO arsee_ars_infos ( `text`, `number`, `depth`, `indexs`, `parent`, `company`, `starttime`, `endtime`, `count`, `normal` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", parsingResult.get(""+i), number, depth, ""+i, parent+parent_index, company, starttime, endtime, "1", "1");										
 			}
 		}
-	
+
 		return "입력 성공";
 	}
 
@@ -213,11 +212,11 @@ public class Management extends Database{
 		initializeDB();
 		JSONParser parser=new JSONParser();
 		Object obj = parser.parse(data);
-        JSONArray array = (JSONArray)obj;
-        for(int i=0;i<array.size();i++){
-        	JSONObject json = (JSONObject)array.get(i);
-    		makePstmtUpdate("DELETE FROM arsee_ars_infos WHERE id = ?", json.get("id").toString());							
-        }
+		JSONArray array = (JSONArray)obj;
+		for(int i=0;i<array.size();i++){
+			JSONObject json = (JSONObject)array.get(i);
+			makePstmtUpdate("DELETE FROM arsee_ars_infos WHERE id = ?", json.get("id").toString());							
+		}
 		return "삭제성공";
 	}
 
@@ -242,7 +241,7 @@ public class Management extends Database{
 		}
 		return "수정 실패";
 	}
-	
+
 	public int returnIndex(String argu){
 		for(int i=0;i<Indexing.length;i++){
 			for(int j=0;j<Indexing[0].length;j++){
@@ -276,7 +275,7 @@ public class Management extends Database{
 		}		
 		return text;
 	}
-	
+
 	public HashMap<String, String> parseNumbers(String ars, String string) throws Exception{
 		HashMap<String, String> arsDivide = new HashMap<String, String>();
 		String elses = "";
@@ -314,5 +313,5 @@ public class Management extends Database{
 		arsDivide.put("100", elses);
 		return arsDivide;
 	}
-	
+
 }

@@ -50,7 +50,7 @@ function drawGraph(){
 	    height = 500 - margin.top - margin.bottom;
 	
 	x = d3.scale.ordinal()
-	    .domain(d3.range(m))
+	    .domain([1,2,3,4,5,6,7,8,9,10,11,12])
 	    .rangeRoundBands([0, width], .08);
 	
 	y = d3.scale.linear()
@@ -147,7 +147,7 @@ function bumpLayer(n, o) {
   var a = [], i;
   for (i = 0; i < n; ++i) a[i] = o + o * Math.random();
   for (i = 0; i < 5; ++i) bump(a);
-  return a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
+  return a.map(function(d, i) { return {x: i+1, y: Math.max(0, d)}; });
 }
 
 function makeLayer(arr){
