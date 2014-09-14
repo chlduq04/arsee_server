@@ -194,6 +194,9 @@ class ConversionProcess():
 
         CloudConvert.upload(self.fromfile, self.toformat, self.url)
 
+    def Converting(self, options):
+        CloudConvert.upload(self.fromfile, self.toformat, self.url, options)
+
     def status(self):
         """
         Returns the status of the process
@@ -263,3 +266,7 @@ class ConversionProcess():
 
         with open(self.tofile, "wb") as f:  # Important to set mode to wb
             f.write(download.read())
+
+
+    def printConversionType(self, inputFormat, outputFormat):
+        print(CloudConvert.conversion_types(inputFormat, outputFormat))

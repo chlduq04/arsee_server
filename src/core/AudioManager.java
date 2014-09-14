@@ -55,16 +55,19 @@ public class AudioManager extends AudioPage{
 			System.out.println(this.fullname);
 		}
 		
+		@SuppressWarnings("deprecation")
 		public void run() {
-			File f = new File("C:\\APM_Setup\\htdocs\\ARSee_Server\\WebContent\\AudioDatas\\"+name.split("\\.")[0]+".wav");
+			String filename = name.split("\\.")[0];
+			File file = new File("C:\\APM_Setup\\htdocs\\ARSee_Server\\WebContent\\AudioDatas\\"+filename+".wav");
 			
 			while(true){
-				System.out.println("check : "+checkcount);
+				System.out.println("파일 : '"+filename+"' 를 체크 중... "+checkcount);
 				if(checkcount > 20){
+					System.out.println("파일 : '"+filename+"' 에 대한 정보 부족... ");
 					this.stop();
 				}
 				
-				if(f.exists()) { 
+				if(file.exists()) { 
 					String parent = "0";
 					try{
 						parent = name.split("--")[1].split("\\.")[0];
@@ -76,16 +79,15 @@ public class AudioManager extends AudioPage{
 						System.out.println("del Thread");
 					}
 					
-					
 					System.out.println("parent : " + parent);
 					if(parent.equals("p")){
 						parent = "0";
 					}
 					System.out.println("number : "+name.split("--")[0]);
-					System.out.println("C:/APM_Setup/htdocs/ARSee_Server/WebContent/AudioDatas/"+name.split("\\.")[0]+".wav");
+					System.out.println("C:/APM_Setup/htdocs/ARSee_Server/WebContent/AudioDatas/"+filename+".wav");
 					
 					try {
-						sendToSpeech("olleh", name.split("--")[0], parent, "C:\\APM_Setup\\htdocs\\ARSee_Server\\WebContent\\AudioDatas\\"+name.split("\\.")[0]+".wav");
+						sendToSpeech("olleh", name.split("--")[0], parent, "C:\\APM_Setup\\htdocs\\ARSee_Server\\WebContent\\AudioDatas\\"+filename+".wav");
 						threadCount--;
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -235,18 +237,13 @@ public class AudioManager extends AudioPage{
 		System.out.println("wefwef1");
 		String PROCESSID = a.getProcessID("amr", "wav");
 		System.out.println("wefwef2");
-		//String DOWNLOADURL = a.getDownloadURL(PROCESSID,"http://127.0.0.1/Users/HanSangyun/Documents/workspace/STT_PC/src/input.amr", "input.amr", "wav" );
-		//String DOWNLOADURL = a.ccc(PROCESSID,"C:/APM_Setup/htdocs/ARSee_Server/WebContent/amr/001.amr", "001.amr", "wav" );
-		//String DOWNLOADURL = a.bbb(PROCESSID,"http://127.0.0.1:8080/ARSee_Server/amr/001.amr", "001.amr", "wav" );
 		String DOWNLOADURL = a.bbb(PROCESSID,"C:/APM_Setup/htdocs/ARSee_Server/WebContent/amr/001.amr", "001.amr", "wav" );
 		System.out.println("wefwef3");
-		//		DOWNLOADURL = getDownloadURL(PROCESSID,"C:\\Users\\HanSangyun\\Documents\\workspace\\STT_PC\\src\\input.amr", "input.amr", "wav" );
 
 
 		System.out.println("==========================================================================================");
 		System.out.println(PROCESSID);
 		System.out.println(DOWNLOADURL);
-		//		System.out.println("https:" + DOWNLOADURL);
 		//C:\\Users\\HanSangyun\\Documents\\workspace\\STT_PC\\src\\input.amr
 	}
 
@@ -328,7 +325,7 @@ public class AudioManager extends AudioPage{
 			System.out.println("Response Code : " + responseCode);
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(
-					con.getInputStream()));
+					con.getInputStream(),"utf-8"));
 			String inputLine;
 			StringBuffer response = new StringBuffer();
 

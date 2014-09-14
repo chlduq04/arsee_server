@@ -61,9 +61,9 @@ def Update(ApiKeyList):
 
 def convert(inputFile, outputFile, ApiKeyList):
 
+
     for ApiIndex in range(len(ApiKeyList)):
         try:
-            print(ApiIndex)
             process = CloudConvert.ConversionProcess(ApiKeyList[ApiIndex])
             CloudConvert.CloudConvert.is_possible("amr", "wav")
             process.init(inputFile, outputFile)
@@ -79,7 +79,7 @@ def convert(inputFile, outputFile, ApiKeyList):
         print("api key index : " + ApiIndex)'''
 
     print("start")
-    process.start()
+    #process.start()
     options = {"audio_bitrate": "32"}
     process.Converting(options)
 

@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
-import jdk.internal.org.objectweb.asm.tree.IntInsnNode;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -225,15 +224,15 @@ public class ManagementHoliday extends Database{
 		initializeDB();
 		int count = 0;
 		if(type.equals(ARS_DATA_TYPE_INFO)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = '1', "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = '1', "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL, "+ARS_DATA_TYPE_NORMAL+" = NULL  WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}else if(type.equals(ARS_DATA_TYPE_ERROR)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = '1', "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = '1', "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL, "+ARS_DATA_TYPE_NORMAL+" = NULL  WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}else if(type.equals(ARS_DATA_TYPE_SHARP)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = '1', "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);					
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = '1', "+ARS_DATA_TYPE_STAR+" = NULL, "+ARS_DATA_TYPE_NORMAL+" = NULL  WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);					
 		}else if(type.equals(ARS_DATA_TYPE_STAR)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = '1' WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = '1', "+ARS_DATA_TYPE_NORMAL+" = NULL  WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}else if(type.equals(ARS_DATA_TYPE_NORMAL)){
-			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
+			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ?, "+ARS_DATA_TYPE_INFO+" = NULL, "+ARS_DATA_TYPE_ERROR+" = NULL, "+ARS_DATA_TYPE_SHARP+" = NULL, "+ARS_DATA_TYPE_STAR+" = NULL, "+ARS_DATA_TYPE_NORMAL+" = '1'  WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}else{
 			count = makePstmtUpdate("UPDATE arsee_ars_infos_holiday SET text = ?, starttime = ?, endtime = ?, indexs = ? WHERE id = ? LIMIT 1", text, starttime, endtime, indexs, id);		
 		}

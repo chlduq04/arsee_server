@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 
 public class Login extends Database{
 	public boolean signUp( String email, String pass, String key, String name, String phone ) throws SQLException{

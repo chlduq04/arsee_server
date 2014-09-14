@@ -22,6 +22,7 @@ public class PageInfoResource {
 		PAGES.put("companys", new PageInfo("companys",page_count++));
 		PAGES.put("error", new PageInfo("error",page_count++));
 		PAGES.put("management", new PageInfo("management",page_count++,"d3.js","d3.layout.js"));
+		PAGES.put("update_view", new PageInfo("update_view",page_count++));
 	}
 	
 	public Vector<String> getPageCss(String pagename){
