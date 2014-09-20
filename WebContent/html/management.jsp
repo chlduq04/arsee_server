@@ -38,7 +38,7 @@
 						<div class="form-group">
 							<label for="modify-endt" class="col-sm-2 control-label">End</label>
 							<div class="col-sm-10">
-								<input name="modify-endt-pop" type="text" class="form-control" id="modify-endt" placeholder="End Time">
+								<input name="modify-endt-pop" type="text" class="form-control" id="modify-endt" placeholder="End Time" value="23:59:59">
 							</div>
 						</div>
 						<div class="form-group">
@@ -132,7 +132,7 @@
 								<div class="form-group">
 									<label for="addition-endt" class="col-sm-2 control-label">End</label>
 									<div class="col-sm-10">
-										<input name="addition-endt-pop" type="text" class="form-control" id="addition-endt" placeholder="End Time"  value="24:00:00">
+										<input name="addition-endt-pop" type="text" class="form-control" id="addition-endt" placeholder="End Time"  value="23:59:59">
 									</div>
 								</div>
 							</div>
@@ -167,7 +167,7 @@
 								<div class="form-group">
 									<label for="addition-endt-noidx" class="col-sm-2 control-label">End</label>
 									<div class="col-sm-10">
-										<input name="addition-endt-pop" type="text" class="form-control" id="addition-endt-noidx" placeholder="End Time"  value="24:00:00">
+										<input name="addition-endt-pop" type="text" class="form-control" id="addition-endt-noidx" placeholder="End Time"  value="23:59:59">
 									</div>
 								</div>
 							</div>

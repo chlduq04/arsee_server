@@ -5,8 +5,38 @@ $( document ).ready(function() {
 	clickAdd();
 	clickResult();
 	clickTotalResult();
+	clickListOpen();
+	clickMakeList();
 });
-var kkk;
+
+function clickMakeList(){
+	$(".qna-add-question").click(function(){
+		$(".qna-add-question").removeClass("active");
+		$(this).addClass("active")
+		$(".add-question-"+$(this).attr("class").match("type-.*")[0].replace(" active","")).find("a").trigger("click");
+	})
+}
+
+function clickListOpen(){
+	$(".qna-list-open").on("click",function(e){
+		var target = $(this).attr("class").match("qlo-.*");
+		var find = $(this).parent().parent().find("li."+target);
+		$(this).css({"display":"none"})
+		$(this).parent().find(".qna-list-close").css({"display":"block"});
+		find.css({"visibility":"visible", "display":"list-item"});
+	})
+	
+	$(".qna-list-close").on("click",function(e){
+		var target = $(this).attr("class").match("qlo-.*");
+		var find = $(this).parent().parent().find("li."+target);
+		$(this).css({"display":"none"})
+		$(this).parent().find(".qna-list-open").css({"display":"block"});
+		find.css({"visibility":"hidden", "display":"none"});
+	});
+	//
+}
+
+
 function clickResult(){
 	$(".qna-result").click(function(){
 		var data = { 

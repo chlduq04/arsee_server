@@ -6,6 +6,8 @@ import hashlib
 import glob
 import time
 import CloudConvert
+import _thread
+
 lib_path = os.path.abspath('..')
 sys.path.append(lib_path)
 
@@ -21,7 +23,7 @@ def Update(ApiKeyList):
     oldSet = set()
 
     while 1:
-        nameList = glob.glob('AudioDatas/*')
+        nameList = glob.glob('file/*')
 
         newSet = set()
 
@@ -52,7 +54,12 @@ def Update(ApiKeyList):
             else:
                 outputFile = inputFile[0:len(inputFile)-4]
                 print("convert : " + outputFile)
-                convert(inputFile, outputFile + ".wav", ApiKeyList)
+                # convert(inputFile, outputFile + ".wav", ApiKeyList)
+                _thread.start_new_thread(convert,(inputFile, outputFile+".wav", ApiKeyList))
+                _thread.start_new_thread(convert,(inputFile, outputFile+".wav", ApiKeyList))
+                _thread.start_new_thread(convert,(inputFile, outputFile+".wav", ApiKeyList))
+                _thread.start_new_thread(convert,(inputFile, outputFile+".wav", ApiKeyList))
+                _thread.start_new_thread(convert,(inputFile, outputFile+".wav", ApiKeyList))
 
         oldSet = set(newSet)
 

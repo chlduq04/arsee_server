@@ -50,3 +50,27 @@ function makeGetUrl(file, paramdic){
 	}
 	return url;
 }
+
+$(document).ready(function(){
+	$(".qna-a-img").mouseover(function(){
+		$(".qna-a-img-over").fadeIn(500);
+	})
+	$(".qna-a-img-over").mouseout(function(){
+		$(this).fadeOut(200);
+	})
+
+	$(".pics-a-img").mouseover(function(){
+		$(".pics-a-img-over").fadeIn(500);
+	})
+	$(".pics-a-img-over").mouseout(function(){
+		$(this).fadeOut(200);
+	})
+
+	$(".management-a-img").mouseover(function(){
+		$(".management-a-img-over").fadeIn(500);
+	})
+	$(".management-a-img-over").mouseout(function(){
+		$(this).fadeOut(200);
+	})
+
+})

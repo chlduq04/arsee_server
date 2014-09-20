@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
@@ -28,6 +29,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.client.ClientProtocolException;
+import org.java_websocket.WebSocketImpl;
+import org.java_websocket.drafts.Draft_17;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -42,9 +45,9 @@ import org.snu.ids.ha.util.Timer;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 public class AudioManager extends AudioPage{
-
+	
 	static int threadCount = 0;
-
+	
 	class MultiThread extends Thread { // Thread 클래스를 상속
 		int checkcount = 0;
 		String name;
@@ -61,9 +64,11 @@ public class AudioManager extends AudioPage{
 			File file = new File("C:\\APM_Setup\\htdocs\\ARSee_Server\\WebContent\\AudioDatas\\"+filename+".wav");
 			
 			while(true){
-				System.out.println("파일 : '"+filename+"' 를 체크 중... "+checkcount);
+				cout("파일 : '"+filename+"' 를 체크 중... "+checkcount);
+				updateStatusSender("파일 : '"+filename+"' 를 체크 중... "+checkcount);
 				if(checkcount > 20){
-					System.out.println("파일 : '"+filename+"' 에 대한 정보 부족... ");
+					cout("파일 : '"+filename+"' 에 대한 정보 부족... ");
+					updateStatusSender("파일 : '"+filename+"' 에 대한 정보 부족... ");
 					this.stop();
 				}
 				
@@ -83,8 +88,8 @@ public class AudioManager extends AudioPage{
 					if(parent.equals("p")){
 						parent = "0";
 					}
-					System.out.println("number : "+name.split("--")[0]);
-					System.out.println("C:/APM_Setup/htdocs/ARSee_Server/WebContent/AudioDatas/"+filename+".wav");
+					cout("number : "+name.split("--")[0]);
+					cout("C:/APM_Setup/htdocs/ARSee_Server/WebContent/AudioDatas/"+filename+".wav");
 					
 					try {
 						sendToSpeech("olleh", name.split("--")[0], parent, "C:\\APM_Setup\\htdocs\\ARSee_Server\\WebContent\\AudioDatas\\"+filename+".wav");
@@ -109,7 +114,9 @@ public class AudioManager extends AudioPage{
 			}
 		}
 	}
-
+	
+	
+	
 	public void audioFileUpload(HttpServletRequest request) throws IOException, SQLException{
 		int sizeLimit = 5 * 1024 * 1024 ; // 5메가까지 제한 넘어서면 예외발생
 		System.out.println("in audio!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -329,7 +336,8 @@ public class AudioManager extends AudioPage{
 			String inputLine;
 			StringBuffer response = new StringBuffer();
 
-			System.out.println(response.toString());
+			cout(response.toString());
+			updateStatusSender(response.toString());
 			String decodedString = "";
 			String AllString = "";
 			boolean checkResult = false;
@@ -337,7 +345,8 @@ public class AudioManager extends AudioPage{
 				if (checkResult) {
 					decodedString = decodedString.substring(11, decodedString.length() - 33);
 					decodedString += "}";
-					System.out.println(decodedString);
+					cout(decodedString);
+					updateStatusSender(decodedString);
 					JSONParser parser=new JSONParser();
 					Object objj = parser.parse(decodedString);
 					JSONObject jobj = (JSONObject)objj;

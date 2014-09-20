@@ -1,4 +1,5 @@
 package core;
+import java.net.UnknownHostException;
 import java.sql.Statement;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -6,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.util.Calendar;
+
+import org.java_websocket.WebSocketImpl;
 
 public class Database {
 	
@@ -69,6 +72,12 @@ public class Database {
 			{"구반", "구반인", "9 반"},
 	};
 
+	protected static UpdateWebsocket updateviewSocket = null;
+	
+	
+	
+	
+	
 
 	public void cout(Object obj){
 		if(DEBUG_MODE){
@@ -218,4 +227,25 @@ public class Database {
 			ARS_CHECK_HOLIDAY = now_check;
 		}
 	}
+
+	public void startWebsocket(String portnum) throws UnknownHostException{
+		WebSocketImpl.DEBUG = false;
+		int port;
+		try {
+			port = new Integer( portnum );
+		} catch ( Exception e ) {
+			cout( "No port specified. Defaulting to 9003" );
+			port = 9003;
+		}
+		cout( "Start Websocket" );
+
+		updateviewSocket = UpdateWebsocket.getInstance(port);
+	}
+	
+	public void updateStatusSender(String message){
+		if(updateviewSocket != null){
+			updateviewSocket.sendMessage(message);
+		}
+	}
+
 }

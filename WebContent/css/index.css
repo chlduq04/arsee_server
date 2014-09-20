@@ -1,53 +1,59 @@
+.header {
+	display: none;
+}
+
+.header-navigation-control {
+	display: none;
+}
+
+.main-icon {
+	margin-top: 50px;
+}
+
+.bt_login {
+	margin-top: 65px;
+}
+
 .main_left {
 	float: left;
-	width: 390px;
-	margin-right: 10px;
-	border-radius: 15px 0px 0px 15px;
+}
+
+.main_left>form {
+	width: 272px;
+	margin-top: 15px;
 }
 
 .main_center {
 	float: left;
-	width: 390px;
-	margin-right: 10px;
+}
+
+.main_center>form {
+	width: 272px;
+	margin-top: 15px;
 }
 
 .main_right {
 	float: left;
-	width: 390px;
-	border-radius: 0px 15px 15px 0px;
 }
 
-.ml_clickbox {
-	height: 150px;
-	cursor: pointer;
-	width: 76%;
-	margin: 35px auto;
-	background-color: white;
-	border: 5px solid black;
-	text-align: center;
-	border-radius: 20px;
+.main_right>form {
+	width: 272px;
+	margin-top: 15px;
 }
 
-.mc_clickbox {
-	text-align: center;
-	height: 150px;
-	cursor: pointer;
-	width: 76%;
-	margin: 35px auto;
-	background-color: white;
-	border: 5px solid black;
-	border-radius: 20px;
+.ml_clickbox > a {
+	float:left;
+	position:relative;
 }
 
-.mr_clickbox {
-	text-align: center;
-	height: 150px;
-	cursor: pointer;
-	width: 76%;
-	margin: 35px auto;
-	background-color: white;
-	border: 5px solid black;
-	border-radius: 20px;
+.mc_clickbox > a {
+	float:left;
+	position:relative;
+}
+
+.mr_clickbox > a {
+	float:left;
+	position:relative;
 }
 
 .m_all_clickbt {
@@ -118,24 +124,72 @@
 }
 
 .index_main {
-	width: 1200px;
+	width: 1034px;
 	margin: 0 auto;
 	overflow: hidden;
+	margin-top: 432px;
 }
 
+.center {
+	background-image: url('../images/new/bg.png');
+	background-size: cover;
+}
+
+/*
+margin-top: 432px;
+margin-left: 443px;
+}
+*/
 .ml_clickbox_img {
-	width: 100%;
-	text-align: center;
-	margin-top: 37px;
+	cursor: pointer;
+	width: 272px;
+	height: 218px;
+	margin-right: 109px;
+	width: 272px;
+}
+
+.ml_clickbox_img_over {
+	top:0;
+	left:0;
+	position:absolute;
+	cursor: pointer;
+	width: 272px;
+	height: 218px;
+	margin-right: 109px;
+	width: 272px;
+	display: none;
+}
+
+.mc_clickbox_img_over {
+	top:0;
+	left:0;
+	position:absolute;
+	cursor: pointer;
+	width: 272px;
+	height: 218px;
+	margin-right: 109px;
+	display: none;
+}
+
+.mr_clickbox_img_over {
+	top:0;
+	left:0;
+	position:absolute;
+	cursor: pointer;
+	width: 272px;
+	height: 218px;
+	display: none;
 }
 
 .mc_clickbox_img {
-	height: 90%;
-	text-align: center;
-	margin-top: 10px;
+	cursor: pointer;
+	width: 272px;
+	height: 218px;
+	margin-right: 109px;
 }
 
 .mr_clickbox_img {
-	height: 100%;
-	text-align: center;
+	cursor: pointer;
+	width: 272px;
+	height: 218px;
 }
