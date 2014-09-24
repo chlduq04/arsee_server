@@ -5,7 +5,7 @@
 <%
 	String pagename = request.getParameter("page");	
 %>
-<div class="header-navigation-control" style="width: 1920px; height:100%; margin: 0 auto;">	
+<div class="header-navigation-control" style="width: 1920px; height:70px; margin: 0 auto;">	
 	<a href="layout.jsp?page=index">
 		<img class="main-icon" src="../images/new/icon.png">
 	</a>
@@ -27,9 +27,10 @@
 		<ul class="nav masthead-nav">
 			<li>			
 			<%if(session.getAttribute("email") != null){%>
-				<img class="bt_logout" src="" alt="">
+				<div class="bt_logout">Logout</div>
 			<%}else{%>
-				<img class="bt_login" src="../images/new/bt_login.png" alt="">
+				<div class="bt_login">Login</div>
+				<div class="update_view_url"><a class="bt_update_view_url" href="layout.jsp?page=update_view">Update</a></div>
 			<%}%>			
 			</li>
 		</ul>

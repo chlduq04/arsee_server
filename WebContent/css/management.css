@@ -1,10 +1,12 @@
-svg{
-	background-color:white;
+svg {
+	background-color: white;
 }
+
 .management_main {
 	overflow: hidden;
 	width: 100%;
 	height: 100%;
+	margin-top: 125px;
 }
 
 .node circle {
@@ -105,7 +107,7 @@ path.link {
 
 .form-horizontal.time-input {
 	overflow: hidden;
-	margin-top: 20px;
+	margin-top: 150px;
 }
 
 .node {
@@ -146,7 +148,7 @@ path.link {
 	display: block;
 }
 
-.ghostCircle,.activeDrag .ghostCircle {
+.ghostCircle, .activeDrag .ghostCircle {
 	display: none;
 }
 
@@ -186,7 +188,7 @@ path.link {
 	z-index: 5002;
 }
 
-#set-tree-del-child-bt{
+#set-tree-del-child-bt {
 	cursor: pointer;
 	background-image: url('../images/manage-delchild-icon.png');
 	background-size: cover;
@@ -218,14 +220,15 @@ path.link {
 	z-index: 5002;
 }
 
-#set-tree-analy-bt{
+#set-tree-analy-bt {
 	cursor: pointer;
 	background-image: url('../images/manage-analysis-icon.png');
 	background-size: cover;
 	position: relative;
 	z-index: 5002;
 }
-#set-tree-analy-bt:hover{
+
+#set-tree-analy-bt:hover {
 	opacity: 0.4;
 }
 
@@ -243,8 +246,9 @@ path.link {
 }
 
 svg {
-	width: calc(100% - 2px);
+	width: 100%;
 	border: 1px solid #DEDEDE;
+	margin: 0 auto;
 }
 
 #cursor_popup_bg {
@@ -281,18 +285,364 @@ svg {
 	left: 0;
 }
 
-.tab-content{
-	padding : 20px 0px 0px 0px;
+.tab-content {
+	padding: 20px 0px 0px 0px;
 }
 
 .delete-child-pop-text {
 	text-align: center;
 	font-size: 30px;
 }
-.day-change{
-	float:right;
+
+.day-change {
+	float: right;
 	width: 100px;
 }
-#tree-container-holiday{
-	display:none;
+
+#tree-container-holiday {
+	display: none;
+}
+
+.management-style-div {
+	width: 100%;
+	background-color: rgb(1, 98, 141);
+}
+
+.management-info-div {
+	overflow: hidden;
+	width: 884px;
+	margin: 0 auto;
+	width: 884px;
+}
+
+.management-title {
+	width: 884px;
+	height: 135px;
+	overflow: hidden;
+	margin: 0 auto;
+	padding: 15px;
+}
+
+.management-title-img {
+	margin-top: 55px;
+}
+
+.management-add-questions {
+	padding: 15px;
+}
+
+.management-add-questions>img {
+	margin-right: 48px;
+}
+
+.management-list-view {
+	width: 884px;
+	margin: 0 auto;
+}
+
+.nav-tabs>li>a {
+	margin-left: 1px;
+}
+
+.maq-input {
+	font-size: 13px;
+	padding-left: 5px;
+	height: 26px;
+	background-color: rgb(51, 129, 163);
+	float: left;
+	margin-right: 30px;
+	border-radius: 5px;
+	color: white;
+	padding-left: 5px;
+}
+
+.management-input-submit {
+	background-color: rgb(46, 203, 112);
+	height: 24px;
+	border-radius: 5px;
+	width: 60px;
+	color: white;
+	font-size: 15px;
+	float: right;
+}
+
+.management-input-save {
+	margin-left: 10px;
+	background-color: silver;
+	height: 24px;
+	border-radius: 5px;
+	width: 60px;
+	color: white;
+	font-size: 15px;
+	float: right;
+}
+
+.management-input-save.active {
+	margin-left: 10px;
+	background-color: rgb(46, 203, 112);
+	height: 24px;
+	border-radius: 5px;
+	width: 60px;
+	color: white;
+	font-size: 15px;
+	float: right;
+}
+
+.management-input-delete {
+	margin-left: 10px;
+	background-color: #ec7063;
+	height: 24px;
+	border-radius: 5px;
+	width: 60px;
+	color: white;
+	font-size: 15px;
+	float: right;
+}
+
+.management-add-question {
+	cursor: pointer;
+	float: left;
+	margin-right: 30px;
+	float: left;
+}
+
+.maq-input-1 {
+	width: 590px;
+}
+
+.maq-input-2-1 {
+	width: 65px;
+	margin-right: 0px;
+}
+
+.maq-input-2-2 {
+	width: 65px;
+}
+
+.maq-input-3 {
+	cursor: pointer;
+	padding-top: 3px;
+	padding-left: 3px;
+	width: 90px;
+}
+
+.maq-input-5 {
+	width: 660px;
+}
+
+.maq-div-1 {
+	margin-bottom: 20px;
+	overflow: hidden;
+}
+
+.maq-div-2 {
+	overflow: hidden;
+}
+
+.flow-point {
+	float: left;
+	width: 22px;
+	padding-top: 3px;
+	padding-left: 7px;
+	color: white;
+}
+
+.open-detail-div {
+	width: 100%;
+	background-color: white;
+	overflow: hidden;
+	text-align: center;
+}
+
+.management-list-open {
+	
+}
+
+.management-list-close {
+	
+}
+
+.management-contents {
+	overflow: hidden;
+	padding: 15px;
+	width: 886px;
+	margin: 0 auto;
+	width: 886px;
+}
+
+.management-close-bt {
+	cursor: pointer;
+	overflow: hidden;
+	width: 100%;
+	margin: 0 auto;
+	margin-bottom: 8px;
+	background-color: rgb(1, 115, 150);
+	border-radius: 15px 15px 0px 0px;
+}
+
+.tab-detail-div {
+	cursor: pointer;
+	overflow: hidden;
+	width: 100%;
+	margin: 0 auto;
+	margin-bottom: 8px;
+	background-color: rgb(1, 115, 150);
+	border-radius: 0px 0px 15px 15px;
+}
+
+.tab-detail-open {
+	overflow: hidden;
+	width: 100%;
+}
+
+.maq-tag-list {
+	width: 100%;
+	margin-bottom: 5px;
+	display: block;
+	float: left;
+	margin-bottom: 5px;
+}
+
+.ok-close-bts {
+	padding: 10px 15px 10px 15px;
+}
+
+.mi-2, .mi-3, .mi-4, .mi-5 {
+	margin-left: 92px;
+}
+
+.management-input-sub-options {
+	background-image: url('../images/new/miso-bg.png');
+	width: 100%;
+	height: 37px;
+	overflow: hidden;
+}
+
+.miso-center {
+	width: 884px;
+	padding: 0px 15px;
+	margin: 0 auto;
+	height: 37px;
+	padding-top: 5px;
+}
+
+.management-ars-list-title {
+	float: left;
+}
+
+.management-ars-list {
+	cursor: pointer;
+	margin: 0px 10px;
+	float: right;
+	margin: 0px 10px;
+}
+
+.management-ars-list:hover {
+	border-bottom: 5px rgb(1, 154, 186);
+	border-style: inset;
+}
+
+.click-border {
+	border-bottom: 5px rgb(1, 154, 186);
+	border-style: inset;
+}
+
+.has-switch {
+	-webkit-mask: url('../images/switch/mask.png') 0 0 no-repeat;
+	mask: url('../images/switch/mask.png') 0 0 no-repeat;
+}
+
+.switch-left {
+	font-size: 12px !important;
+	color: white !important;
+}
+
+.switch-right {
+	font-size: 12px !important;;
+	color: white !important;
+}
+
+.has-switch>div.switch-on label {
+	background-color: white;
+}
+
+.has-switch span.switch-left {
+	background-color: rgb(1, 154, 186);
+}
+
+.has-switch>div.switch-off label {
+	background-color: white;
+}
+
+.has-switch span.switch-right {
+	background-color: rgb(1, 154, 186);
+}
+
+.has-switch label {
+	border: 2px solid rgb(1, 154, 186) !important;
+}
+
+.switch.has-switch {
+	float: right;
+	margin-left: 15px;
+}
+
+.allow-up {
+	width: 16px;
+	height: 14px;
+	background-image: url('../images/new/arrow-top.png');
+	margin: 0 auto;
+	background-size: cover;
+	display: block;
+}
+
+.allow-down {
+	width: 16px;
+	height: 14px;
+	background-image: url('../images/new/arrow-bottom.png');
+	background-size: cover;
+	margin: 0 auto;
+	display: block;
+}
+
+.list-numbering-icon {
+	float: left;
+	width: 27px;
+}
+
+.data-list-background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	opacity: 0.3;
+	z-index: 2000;
+}
+
+.data-list {
+	z-index: 2001;
+	width: 400px;
+	position: absolute;
+	background-color: white;
+	border-radius: 5px;
+	top: 50%;
+	left: 50%;
+	border: 2px solid rgb(1, 98, 141);
+}
+
+.data-list-ul {
+	padding: 10px;
+}
+
+.data-list-ul>li {
+	font-size: 14px;
+	margin-bottom: 5px;
+	cursor: pointer;
+}
+
+.data-list-ul>li:hover {
+	color: rgb(1, 98, 141);
+	font-weight: bold;
 }

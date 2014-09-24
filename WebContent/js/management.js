@@ -1,69 +1,93 @@
 var color_variation = ["#B4B1FF", "#8985FF", "#2D24FF", "#060097", "#040074"];
 var find_company_ajax = $(".management_main").attr("company");
 var find_number_ajax = $(".management_main").attr("number");
-var find_by_min_time = $("#starttm").val();
+var find_by_min_time =  $(".management_main").attr("time");
 var jsondata = [];
 var click_by_id = {};
+var click_by_before;
+var click_by_mode = "add";
 var root;
-var tooltip;
 var mousex, mousey;
 var click_by_root;
 var day_or_holiday = "day";
+
+function checkClick(func){
+	return function(){
+		if(click_by_id.n_id != undefined){
+			func();
+		}else{
+			alert("원하시는 노드를 클릭해주세요")
+		}
+	}
+}
+
 $( document ).ready(function() {
 	draw_svg();
 	click_add_database();
 	click_search_database();
 	checkMousePosition();
-	$("[data-toggle='tooltip']").tooltip();
+	clickSettingTitle();
+	clickSettingDetail();
+	checkOtherData();
+	
 	//analysis_data_tree();
+	setTimeout(function(){	
+		$("[data-toggle='switch']").wrap('<div class="switch" />').parent().bootstrapSwitch();
+		$(".switch-left").html("week");
+		$(".switch-right").html("holiday");
+		$(".switch.has-switch").bind("click",function(){
+			if($(".switch-animate").attr("class").match("switch-on") != null){
+				day_or_holiday = "day";
+				$("svg").remove();
+				draw_svg();
+			}else{
+				day_or_holiday = "holiday";
+				$("svg").remove();
+				draw_svg();
+			}
+		})
+	},10)
 });
+
+function clickSettingDetail(){
+	$(".tab-detail-div").bind("click",function(e){
+		$(".tab-detail-div").fadeOut(200,function(){
+			$(".tab-detail-open").removeClass("display-none");
+		});
+	})	
+
+	$(".management-close-bt").bind("click",function(e){
+		$(".tab-detail-open").addClass("display-none");
+		$(".tab-detail-div").fadeIn(300);
+	})
+}
+
+function clickSettingTitle(){
+	$(".management-add-question").bind("click",function(e){
+		if((""+$(this).attr("class").match("type.*")).replace("type-","") == "analysis"){
+		}else{
+			$(this).next().focus();
+		}
+	})
+}
 
 function checkMousePosition(){
 	$(document).bind('mousemove',function(e){ 
 		mousex = e.pageX;
 		mousey = e.pageY; 
 	}); 
-
 }
 
-function treeOptionPop(open){
-	if(open){
-		$("#cursor_popup").css({display:"block"});
-		$("#cursor_popup_bg").css({left:mousex, top:mousey, display:"block"});
-		$("#cursor_popup_black").css({display:"block"});
-	}else{
-		$("#cursor_popup").css({display:"none"});
-		$("#cursor_popup_bg").css({display:"none"});
-		$("#cursor_popup_black").css({display:"none"});
-	}
-}
 
-function ShowTooltip(tooltip_box, tooltip_text, evt)
-{
-	var maxlength = 0;
-	for(var i=0;i<tooltip_text.length;i++){
-		if(maxlength < tooltip_text[i].getComputedTextLength()){
-			maxlength = tooltip_text[i].getComputedTextLength();
-		}
-	}
-	tooltip_box.attr("visibility","visible");
-	tooltip_box.attr("width",maxlength+10);
-	tooltip_text.attr("visibility","visible");
-}
-
-function HideTooltip(tooltip_box, tooltip_text)
-{
-	tooltip_box.attr("visibility","hidden");
-	tooltip_text.attr("visibility","hidden");
-}
 
 function draw_svg(){
 
 	var colors = ["#bd0026","#fecc5c", "#fd8d3c", "#f03b20", "#B02D5D",
 	              "#9B2C67", "#982B9A", "#692DA7", "#5725AA", "#4823AF",
 	              "#d7b5d8","#dd1c77","#5A0C7A","#5A0C7A"];
-
-	treeJSON = d3.json(makeGetUrl("method/management-"+day_or_holiday+".jsp",{number:find_number_ajax,company:find_company_ajax,func:"parse",t_min:find_by_min_time}), function(error, treeData) {
+	$(".company_input").val(find_company_ajax);
+	$(".number_input").val(find_number_ajax);
+	treeJSON = d3.json(makeGetUrl("method/management-"+day_or_holiday+".jsp",{number:find_number_ajax, company:find_company_ajax,func:"parse",t_min:find_by_min_time}), function(error, treeData) {
 		// Get JSON data
 		// Calculate total nodes, max label length
 		var maxLabelLengthLimit = 40;
@@ -81,7 +105,7 @@ function draw_svg(){
 
 		// size of the diagram
 		var viewerWidth = $(document).width();
-		var viewerHeight = $(document).height();
+		var viewerHeight = 850;
 
 		var tree = d3.layout.tree()
 		.size([viewerHeight, viewerWidth]);
@@ -300,6 +324,7 @@ function draw_svg(){
 				}
 				// Make sure that the node being added to is expanded so user can see added node is correctly moved
 				expand(selectedNode);
+				check_save_tree();
 				sortTree();
 				endDrag();
 			} else {
@@ -412,6 +437,100 @@ function draw_svg(){
 			//centerNode(d);
 		}
 
+		function makeEmptyNode(node, source){
+			node.select('text')
+			.attr("x", function(d) {
+				return d.children || d._children ? -10 : 10;
+			})
+			.attr("text-anchor", function(d) {
+				return d.children || d._children ? "end" : "start";
+			})
+			.text(function(d) {
+				return "empty";
+			});
+
+			// Change the circle fill depending on whether it has children and is collapsed
+			node.select("circle.nodeCircle")
+			.attr("r", 4.5)
+			.style("fill", function(d) {
+				return d._children ? "lightsteelblue" : "#fff";
+			});
+
+			// Transition nodes to their new position.
+			var nodeUpdate = node.transition()
+			.duration(duration)
+			.attr("transform", function(d) {
+				return "translate(" + d.y + "," + d.x + ")";
+			});
+
+			// Fade the text in
+			nodeUpdate.select("text")
+			.style("fill-opacity", 1);
+
+			// Transition exiting nodes to the parent's new position.
+			var nodeExit = node.exit().transition()
+			.duration(duration)
+			.attr("transform", function(d) {
+				return "translate(" + source.y+10 + "," + source.x+10 + ")";
+			})
+			.remove();
+
+			nodeExit.select("circle")
+			.attr("r", 0);
+
+			nodeExit.select("text")
+			.style("fill-opacity", 0);
+
+			// Update the links��
+			var link = svgGroup.selectAll("path.link")
+			.data(links, function(d) {
+				return d.target.id;
+			});
+
+			// Enter any new links at the parent's previous position.
+			link.enter().insert("svg:path", "g")
+			.attr("class", "link")
+			.attr("stroke",function(d){
+				if(d.target.type == "info"){
+					return "black";
+				}else if(d.target.type == "error"){
+					return "red";
+				}else if(d.target.type == "star"){
+					return "#0E53A7";
+				}else if(d.target.type == "sharp"){
+					return "#4512AE";
+				}else{
+					if(d.target.count/10000 >= 1){
+						return color_variation[4];
+					}else if(d.target.count/1000 >= 1){
+						return color_variation[3];
+					}else if(d.target.count/100 >= 1){
+						return color_variation[2];
+					}else if(d.target.count/10 >= 1){
+						return color_variation[1];
+					}else{
+						return color_variation[0];
+					}
+				}
+			})
+			.attr("stroke-width", function (d,i) {
+				return d.target.count%30;
+			})
+			.attr("stroke-opacity",function(d,i){
+				return 0.3;
+			})
+			.attr("d", function(d) {
+				var o = {
+						x: source.x0,
+						y: source.y0
+				};
+				return diagonal({
+					source: o,
+					target: o
+				});
+			})
+		}
+
 		function update(source) {
 			// Compute the new height, function counts total children of root node and sets tree height accordingly.
 			// This prevents the layout looking squashed when new nodes are made visible or looking sparse when nodes are removed
@@ -482,54 +601,62 @@ function draw_svg(){
 				return d.name.substring(0,maxLabelLengthLimit);
 			})
 			.on("click",function(d){
-				if(!(click_by_id["n_id"] == null || click_by_id["n_id"] == undefined || $("#addition-pop").css("display") == "none")){
-					$("#modify-text").val("");
-					$("#modify-startt").val("");
-					$("#modify-endt").val("");
-					$("#addition-text").val("");
-					$("#addition-startt").val("");
-					$("#addition-endt").val("");
-					$("#addition-select").val("");
-					
-				}else{
-					treeOptionPop(true);
-					click_by_id["n_id"] = d.id;
-					click_by_id["n_parent"] = d.parentc;
-					click_by_id["n_indexs"] = d.indexs;
-					click_by_id["n_start"] = d.starttime;
-					click_by_id["n_end"] = d.endtime;
-					click_by_id["n_text"] = d.name;
-					if(d.parentc == "-1"){
-						click_by_id["n_depth"] = 0;
-						click_by_id["n_parent"] = "";
-						click_by_id["n_parent_index"] = "0";
-					}else if(d.parent.parentc == "-1"){
-						click_by_id["n_depth"] = 1;
-						click_by_id["n_parent"] = "";
-						click_by_id["n_parent_index"] =  d.indexs;
-					}else{
-						click_by_id["n_depth"] = d.parentc.length+1;
-						click_by_id["n_parent"] = d.parentc;
-						click_by_id["n_parent_index"] = d.indexs;
-					}
-					$("#modify-text").val(d.name);
-					$("#modify-startt").val(d.starttime);
-					$("#modify-endt").val(d.endtime);
-					$("#modify-type").val(d.type);
 
+				if(click_by_before != null && click_by_before != undefined){
+					click_by_before.attr({"fill":"black"})
+				}
+				$(this).attr({"fill":"blue"});
+				click_by_before = $(this);
+				
+				click_by_id["n_id"] = d.id;
+				click_by_id["n_parent"] = d.parentc;
+				click_by_id["n_indexs"] = d.indexs;
+				click_by_id["n_start"] = d.starttime;
+				click_by_id["n_end"] = d.endtime;
+				click_by_id["n_text"] = d.name;
+				if(d.parentc == "-1"){
+					click_by_id["n_depth"] = 0;
+					click_by_id["n_parent"] = "";
+					click_by_id["n_parent_index"] = "0";
+				}else if(d.parent.parentc == "-1"){
+					click_by_id["n_depth"] = 1;
+					click_by_id["n_parent"] = "";
+					click_by_id["n_parent_index"] =  d.indexs;
+				}else{
+					click_by_id["n_depth"] = d.parentc.length+1;
+					click_by_id["n_parent"] = d.parentc;
+					click_by_id["n_parent_index"] = d.indexs;
+				}
+
+				postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tags_result" }), click_by_id, null, function(s){
+					var inputs = $(".maq-div-3").find("input");
+					var result = JSON.parse(s);
+					var index = 0;
+					for(var k in result) {
+						$(inputs[index]).attr({"detail_id":k});
+						$(inputs[index++]).val(result[k]);
+					}
+
+					for( ; index < inputs.length ; index++){
+						$(inputs[index]).val("");
+						$(inputs[index]).attr({"detail_id":-(index+1)});
+					}
+
+				}, function(e){alert(e);});		
+
+				if(click_by_mode == "modify" || click_by_mode == "delete"){
 					$("#addition-text").val(d.name);
 					$("#addition-startt").val(d.starttime);
 					$("#addition-endt").val(d.endtime);
-					$("#addition-select").val(d.indexs);
-						
-					click_by_root = d;
-					$(".graph-bts").css("opacity","1");
+					$("#addition-idx").val(d.indexs);
+					$("#addition-type").val(d.type);
 				}
-			}).on("mouseover",function(d){
-				ShowTooltip($(this).parent().find(".tooltip_bg"), $(this).parent().find(".tooltip_svg"), d);
-			}).on("mouseout",function(d){
-				HideTooltip($(this).parent().find(".tooltip_bg"), $(this).parent().find(".tooltip_svg"));
-			});
+				
+				click_by_root = d;
+				$(".graph-bts").css("opacity","1");
+
+				//makeEmptyNode($(this.parentNode), source);
+			})
 
 			// phantom node to give us mouseover in a radius around it
 			nodeEnter.append("circle")
@@ -544,44 +671,6 @@ function draw_svg(){
 			.on("mouseout", function(node) {
 				outCircle(node);
 			});
-
-
-			nodeEnter.append("svg:rect")
-			.attr("class","tooltip_bg")
-			.attr("id","tooltip_bg")
-			.attr("x","0")
-			.attr("y","5")
-			.attr("rx","4")
-			.attr("ry","4")
-			.attr("width","80")
-			.attr("height","36")
-			.attr("visibility","hidden")
-			.attr("fill","white")
-			.attr("stroke","black")
-			.attr("stroke-width","1")
-			.attr("opacity","0.85");
-
-			nodeEnter.append("svg:text")
-			.attr("class","tooltip_svg")
-			.attr("id","tooltip_svg")
-			.attr("x","5")
-			.attr("y","18")
-			.attr("visibility","hidden")
-			.html(function(d){
-				return "Count : "+d.count;
-			});
-
-			nodeEnter.append("svg:text")
-			.attr("class","tooltip_svg")
-			.attr("id","tooltip_svg")
-			.attr("x","5")
-			.attr("y","35")
-			.attr("visibility","hidden")
-			.html(function(d){
-				return "Text : "+d.name;
-			});
-
-
 
 			// Update the text to reflect whether node has children or not.
 			node.select('text')
@@ -757,129 +846,99 @@ function aroundtree_to_json(root){
 }
 
 function click_add_database(){
-	$("#cursor_popup_black").click(function(){
-		treeOptionPop(false);
-	})
 
-	$(".graph-bts").click(function(){
-		treeOptionPop(false);
-	})
-
-	$("#manage-add-depth").click(function(){
-		length = $("#manage-depth-buttons-option").attr("length");
-		length++;
-		$("#manage-depth-buttons-option").attr({"length":length});
-		$("#manage-depth-buttons").append('<button type="button" class="btn btn-default" depthid="'+length+'">'+length+'</button>');
-	});
-
-	$("#manage-remove-depth").click(function(){
-		length = $("#manage-depth-buttons-option").attr("length");
-		$(".btn.btn-default")[depthid=length].remove();
-		length--;
-		$("#manage-depth-buttons-option").attr({"length":length});
-
-	});
-
-	$("#manage-add-depth").click(function(){
-
-	});
-
-	$("#set-tree-change").click(function(){
-		jsondata = [];
-		aroundtree_to_json(root);
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tree" }), {data : JSON.stringify(jsondata)}, null, function(s){
-			$("svg").remove();draw_svg();
-		}, function(e){alert(e);});
-	});
-
-	$("#set-mod-submit").click(function(){
-		click_by_id["n_text"] = $("#modify-text").val();
-		click_by_id["n_start"] = $("#modify-startt").val();
-		click_by_id["n_end"] = $("#modify-endt").val();
-		click_by_id["n_type"] = $("#modify-type").val();
-		if(click_by_id["n_type"] == "info"){
-			click_by_id["n_indexs"] = "s";
-		}else if(click_by_id["n_type"] == "error"){
-			click_by_id["n_indexs"] = "-"
-		}else if(click_by_id["n_type"] == "sharp"){
-			click_by_id["n_indexs"] = "#"
-		}else if(click_by_id["n_type"] == "star"){
-			click_by_id["n_indexs"] = "*"
+	$(".management-ars-list").bind("click",function(){
+		click_by_mode = (""+$(this).attr("class").match("mal-.*")).replace("mal-","").replace(" click-border","");
+		$(".management-ars-list").removeClass("click-border");
+		$(this).addClass("click-border");
+		if(click_by_mode == "add"){
+			$(".management-info-div").find("input:not(.maq-5)").val("");
+			$(".maq-input.maq-input-2-1").val("00:00:00");
+			$(".maq-input.maq-input-2-2").val("23:59:59");
+		}else if(click_by_mode == "modify" || click_by_mode == "delete"){
+			$("#addition-text").val(click_by_id.n_text);
+			$("#addition-startt").val(click_by_id.n_start);
+			$("#addition-endt").val(click_by_id.n_end);
+			$("#addition-idx").val(click_by_id.n_indexs);
+			if(click_by_id.n_indexs == "s"){
+				$("#addition-type").val("info")
+			}else if(click_by_id.n_indexs == "*"){
+				$("#addition-type").val("star")
+			}else if(click_by_id.n_indexs == "#"){
+				$("#addition-type").val("sharp")
+			}else if(click_by_id.n_indexs == "-"){
+				$("#addition-type").val("error")
+			}else{
+				$("#addition-type").val("normal")
+			}
 		}
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "mod" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
-	});
-
-	$("#set-add-submit").click(function(){
-		if($("#addition-pop").find("li[class=active]").attr("addition-type") == "one"){
+	})
+	
+	$(".management-input-submit.maq-5").bind("click",checkClick(function(){
+		if(click_by_mode == "modify"){
 			click_by_id["n_text"] = $("#addition-text").val();
-			click_by_id["n_indexs"] = $("#addition-idx").val();
-			click_by_id["n_type"] = $("#addition-type").val();
 			click_by_id["n_start"] = $("#addition-startt").val();
 			click_by_id["n_end"] = $("#addition-endt").val();
-			if(click_by_id["n_type"] == "info"){
-				click_by_id["n_indexs"] = "s";
-			}else if(click_by_id["n_type"] == "error"){
-				click_by_id["n_indexs"] = "-"
-			}else if(click_by_id["n_type"] == "sharp"){
-				click_by_id["n_indexs"] = "#"
-			}else if(click_by_id["n_type"] == "star"){
-				click_by_id["n_indexs"] = "*"
-			}
-			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_one" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
-		}else if($("#addition-pop").find("li[class=active]").attr("addition-type") == "text"){
-			click_by_id["n_text"] = $("#addition-text-noidx").val();
-			click_by_id["n_start"] = $("#addition-startt-noidx").val();
-			click_by_id["n_end"] = $("#addition-endt-noidx").val();
-			if(click_by_id["n_type"] == "info"){
-				click_by_id["n_indexs"] = "s";
-			}else if(click_by_id["n_type"] == "error"){
-				click_by_id["n_indexs"] = "-"
-			}else if(click_by_id["n_type"] == "sharp"){
-				click_by_id["n_indexs"] = "#"
-			}else if(click_by_id["n_type"] == "star"){
-				click_by_id["n_indexs"] = "*"
-			}
-			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_text" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
-		}
-	});
+			click_by_id["n_type"] = $("#addition-type").val();
+			click_by_id["n_indexs"] = $("#addition-idx").val();
 
-	$("#set-del-submit").click(function(){
-		jsondata = [];
-		aroundtree_to_json(click_by_root);
-		click_by_id["del_tree"] = JSON.stringify(jsondata);
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "del" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
-	});
-	
-	$("#set-del-child-submit").click(function(){
-		jsondata = [];
-		if(click_by_root.children){
-			for( var i=0 ; i < click_by_root.children.length ; i++){
-				aroundtree_to_json(click_by_root.children[i]);		
+			if(click_by_id["n_type"] == "info"){
+				click_by_id["n_indexs"] = "s";
+			}else if(click_by_id["n_type"] == "error"){
+				click_by_id["n_indexs"] = "-"
+			}else if(click_by_id["n_type"] == "sharp"){
+				click_by_id["n_indexs"] = "#"
+			}else if(click_by_id["n_type"] == "star"){
+				click_by_id["n_indexs"] = "*"
 			}
+
+			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "mod" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+		}else if(click_by_mode == "add"){
+			if($("#addition-idx").val() != "auto"){
+				click_by_id["n_text"] = $("#addition-text").val();
+				click_by_id["n_indexs"] = $("#addition-idx").val();
+				click_by_id["n_type"] = $("#addition-type").val();
+				click_by_id["n_start"] = $("#addition-startt").val();
+				click_by_id["n_end"] = $("#addition-endt").val();
+				if(click_by_id["n_type"] == "info"){
+					click_by_id["n_indexs"] = "s";
+				}else if(click_by_id["n_type"] == "error"){
+					click_by_id["n_indexs"] = "-"
+				}else if(click_by_id["n_type"] == "sharp"){
+					click_by_id["n_indexs"] = "#"
+				}else if(click_by_id["n_type"] == "star"){
+					click_by_id["n_indexs"] = "*"
+				}
+				postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_one" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+			}else{
+				click_by_id["n_text"] = $("#addition-text").val();
+				click_by_id["n_start"] = $("#addition-startt").val();
+				click_by_id["n_end"] = $("#addition-endt").val();
+				if(click_by_id["n_type"] == "info"){
+					click_by_id["n_indexs"] = "s";
+				}else if(click_by_id["n_type"] == "error"){
+					click_by_id["n_indexs"] = "-"
+				}else if(click_by_id["n_type"] == "sharp"){
+					click_by_id["n_indexs"] = "#"
+				}else if(click_by_id["n_type"] == "star"){
+					click_by_id["n_indexs"] = "*"
+				}
+				postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_text" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+			}
+		}else if(click_by_mode == "delete"){
+			jsondata = [];
+			aroundtree_to_json(click_by_root);
+			click_by_id["del_tree"] = JSON.stringify(jsondata);
+			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "del" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+		}else if(click_by_mode == "mode"){
+			jsondata = [];
+			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "duplicate" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+		}else{
+			
 		}
-		click_by_id["del_tree"] = JSON.stringify(jsondata);
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "del" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
-	});
-	
-	$("#set-tree-det-bt").click(function(){
-		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tags_result" }), click_by_id, null, function(s){
-			var inputs = $("#detail-pop").find("input");
-			var result = JSON.parse(s);
-			var index = 0;
-			for(var k in result) {
-				$(inputs[index]).attr({"detail_id":k});
-				$(inputs[index++]).val(result[k]);
-			}
-			
-			for( ; index < inputs.length ; index++){
-				$(inputs[index]).val("");
-				$(inputs[index]).attr({"detail_id":-(index+1)});
-			}
-			
-		}, function(e){alert(e);});		
-	});
-	
-	$("#set-det-submit").click(function(){
+	}));
+
+	$("#set-det-submit").bind("click",checkClick(function(){
 		var inputs = $("#detail-pop").find("input");
 		var datadic = {};
 		var detail_new = [];
@@ -899,23 +958,57 @@ function click_add_database(){
 		}
 		datadic["new"] = JSON.stringify(detail_new);
 		datadic["old"] = JSON.stringify(detail_old);
+
 		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tags_insert" }), datadic, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});		
-		
-	});
+	}));
 	
-	$(".form-group.day-change").find("input").click(function(){
-		if($(this).attr("value") == "day"){
-			day_or_holiday = "day";
-			$("svg").remove();
-			draw_svg();
-		}else if($(this).attr("value") == "holiday"){
-			day_or_holiday = "holiday";
-			$("svg").remove();
-			draw_svg();
+	$(".management-input-save").on("click",function(){
+		if($(this).is(".active")){
+			jsondata = [];
+			aroundtree_to_json(root);
+			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tree" }), {data : JSON.stringify(jsondata)}, null, function(s){
+				$("svg").remove();draw_svg();
+				$(".management-input-save").removeClass("active");
+			}, function(e){alert(e);});
 		}
 	});
+
 }
 
+function check_save_tree(){
+	if(!$(".management-input-save").is(".active")){
+		$(".management-input-save").addClass("active");
+	}
+}
+
+function checkOtherData(){
+	$(".type-analysis").bind("click",function(e){
+		jsondata = [];
+		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "others" }), click_by_id, null, function(s){console.log(s.trim());
+			$(".data-list-background").removeClass("display-none");
+			$(".data-list").removeClass("display-none");
+			var result = JSON.parse(s.trim());
+			$(".data-list-ul").html("");
+			var count = 0;
+			for(var index in result){
+				var arr = result[index].split("--");
+				$(".data-list-ul").append($("<li></li>").html((count++)+". "+arr[0]+" ("+arr[1]+")"));
+			}
+			$(".data-list-ul>li").bind("click",function(){
+				click_by_before.html($(this).html());
+				$("#addition-text").val(arr[0]);
+				$(".data-list").addClass("display-none");
+				$(".data-list-background").addClass("display-none");
+			})
+		}, function(e){alert(e);});
+	});
+	
+	$(".data-list-background").bind("click", function(e){
+		$(".data-list").addClass("display-none");
+		$(this).addClass("display-none");
+	});
+	
+}
 
 function aroundtree_to_tree(root){
 	var obj = new Object();
@@ -939,4 +1032,3 @@ function aroundtree_to_tree(root){
 	}
 	return obj;
 }
-

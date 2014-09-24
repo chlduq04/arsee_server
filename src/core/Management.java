@@ -240,7 +240,27 @@ public class Management extends Database{
 		}
 		return "수정 실패";
 	}
+	
+	public String duplicate(String number, String company) throws SQLException{
+		initializeDB();
+		String day_to_holiday = "INSERT INTO arsee_ars_infos_holiday (text, number, depth, indexs, parent, company, starttime, endtime, count,info,normal, error, star, sharp) SELECT text, number, depth, indexs, parent,company, starttime, endtime, count, info, normal, error, star, sharp "
+				+ "FROM arsee_ars_infos "
+				+ "WHERE number = ? and company = ?";
+		makePstmtUpdate(day_to_holiday, number, company);
+		return "복사 완료";
+	}
 
+	public String findOthers(String number, String company, String depth, String index) throws SQLException{
+		initializeDB();
+		JSONObject result = new JSONObject();
+		String find_other_datas = "SELECT id, text, count FROM arsee_ars_infos_update WHERE company = ? and number = ? and depth = ? and indexs = ? order by count desc";
+		ResultSet rss = makePstmtExecute(find_other_datas, company, number, depth, index);
+		while(rss.next()){
+			result.put(rss.getString("id"), rss.getString("text")+ARS_DATA_SPLIT_KEY+rss.getString("count"));
+		}
+		return result.toJSONString();
+	}
+	
 	public int returnIndex(String argu){
 		for(int i=0;i<Indexing.length;i++){
 			for(int j=0;j<Indexing[0].length;j++){
@@ -263,7 +283,11 @@ public class Management extends Database{
 							value = value.substring( 0, value.length()-1 );
 						}
 						map.put(""+i, value);
-						text = text.split(Indexing[i][j])[1].trim();
+						try{
+							text = text.split(Indexing[i][j])[1].trim();
+						}catch(Exception e){
+							text = "";
+						}
 						ch = true;
 					}
 				}

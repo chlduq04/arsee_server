@@ -13,9 +13,10 @@
 		<ul class="nav masthead-nav">
 			<li>			
 			<%if(session.getAttribute("email") != null){%>
-				<img class="bt_logout" src="" alt="">
+				<div class="bt_logout">Logout</div>
 			<%}else{%>
-				<img class="bt_login" src="../images/new/index_bt_login.png" alt="">
+				<div class="bt_login">Login</div>
+				<div class="update_view_url"><a class="bt_update_view_url" href="layout.jsp?page=update_view">Update</a></div>
 			<%}%>			
 			</li>
 		</ul>
@@ -33,27 +34,18 @@
 	</div>
 	<div class="main_center">
 		<div class="mc_clickbox">
-			<a href="layout.jsp?page=qna">
+			<a href="layout.jsp?page=pics">
 				<img class="mc_clickbox_img" src="../images/new/icon_2.png" alt=" "/>
 				<img class="mc_clickbox_img_over" src="../images/new/overicon_2.png" alt=" "/>
 			</a>
 		</div>
-		<form action="layout.jsp?page=pics" method="POST">
-			<input class="mc_insertphonenum form-control" type="text" name="phonenum" placeholder="Input Your Phone Number" /> 
-			<input type="submit" class="btn btn-lg btn-primary m_all_clickbt" value="^" />
-		</form>
 	</div>
 	<div class="main_right">
 		<div class="mr_clickbox">
-			<a href="layout.jsp?page=qna">
+			<a href="layout.jsp?page=management">
 				<img class="mr_clickbox_img" src="../images/new/icon_3.png" alt=" "/>
 				<img class="mr_clickbox_img_over" src="../images/new/overicon_3.png" alt=" "/>
 			</a>
 		</div>
-		<form action="layout.jsp?page=management" method="POST">
-			<input class="mr_insertcompany form-control" type="text" name="company" placeholder="Input Company" /> 
-			<input class="mr_insertnumber form-control" type="text" name="number" placeholder="Input Ars Number" /> 
-			<input type="submit" class="btn btn-lg btn-primary m_all_clickbt" value="^" />
-		</form>
 	</div>
 </div>

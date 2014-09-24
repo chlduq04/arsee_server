@@ -6,6 +6,7 @@
 String func = request.getParameter("func");
 String number = request.getParameter("number");
 String company = request.getParameter("company");	
+
 if(func.equals("add_one")){
 	String depth = request.getParameter("n_depth");
 	String parent = request.getParameter("n_parent");
@@ -50,5 +51,11 @@ if(func.equals("add_one")){
 	String mod_val = request.getParameter("old");
 	String new_val = request.getParameter("new");
 	out.println(manage.tagsToDatabase(id, mod_val, new_val));
+}else if(func.equals("duplicate")){
+	out.println(manage.duplicate(number,company));
+}else if(func.equals("others")){
+	String depth = request.getParameter("n_depth");
+	String index = request.getParameter("n_indexs");
+	out.println(manage.findOthers(number, company, depth, index));	
 }
 %>

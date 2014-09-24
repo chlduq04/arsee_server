@@ -50,5 +50,11 @@ if(func.equals("add_one")){
 	String mod_val = request.getParameter("old");
 	String new_val = request.getParameter("new");
 	out.println(manage_holiday.tagsToDatabase(id, mod_val, new_val));
+}else if(func.equals("duplicate")){
+	out.println(manage_holiday.duplicate(number, company));
+}else if(func.equals("others")){
+	String depth = request.getParameter("n_depth");
+	String index = request.getParameter("n_indexs");
+	out.println(manage_holiday.findOthers(number, company, depth, index));	
 }
 %>

@@ -4,7 +4,7 @@ $(document).ready(function(){
 		console.log(text);
 		console.log(all_text);
 		var date = new Date;
-		all_text = date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+"->"+text + all_text;
+		all_text = date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+"]"+text + all_text;
 		$("#log").html(all_text);
 	}
 

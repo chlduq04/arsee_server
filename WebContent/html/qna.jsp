@@ -38,6 +38,8 @@
 					request.getParameter("check3"),
 					request.getParameter("check4"),
 					request.getParameter("check5"));
+		} else if(method.equals("")){
+			
 		}
 	}
 	String pagename = request.getParameter("page");
@@ -50,17 +52,7 @@
 	}
 	
 %>
-<div class="qna-top-navigation">
-	<div class="com-num-input-div">
-		<form action="layout.jsp?page=qna" method="POST">
-			<div class="company_input_name">Company</div>
-			<input class="company_input" name="company"/>
-			<div class="number_input_name">ARS number</div>
-			<input class="number_input" name="number"/>
-			<input class="com-num-input-submit" type="submit" value="OK"/>
-		</form>
-	</div>
-</div>
+
 <!-- Modal -->
 <div class="modal fade" id="result-pop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -71,11 +63,6 @@
 
 			</div>
 			<div class="modal-body result-pop-text">
-			</div>
-			<div class="modal-footer">
-				<button type="button" id="set-del-submit" data-dismiss="modal"
-					class="btn btn-primary">Yes</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
@@ -102,8 +89,7 @@
 					<div class="tab-content">
 						<div class="tab-pane active" id="qna-point-tab">
 							<div>
-								<form class="form-horizontal" role="form" method="POST"
-									action="layout.jsp?page=qna">
+								<form class="form-horizontal" role="form" method="POST" action="layout.jsp?page=qna">
 									<div class="form-group">
 										<label for="inputQuestion" class="col-sm-2 control-label">Question?</label>
 										<div class="col-sm-10">
@@ -314,10 +300,6 @@
 							</div>
 						</div>
 					</div>
-
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
@@ -351,13 +333,13 @@
 			<%if(inputCount<10){%>0<%}%><%=inputCount%>.
 			</p>
 			<p class="qna-list-comment"><%=rs.getString("text")%></p>
-			<img class="qna-list-open qlo qlo-<%=inputCount%>" src="../images/new/list-open.png"/>
-			<img class="qna-list-close qlo qlo-<%=inputCount%>" src="../images/new/list-close.png"/>
+			<img class="qna-list-open qlo qlo-<%=rs.getString("id")%>" src="../images/new/list-open.png"/>
+			<img class="qna-list-close qlo qlo-<%=rs.getString("id")%>" src="../images/new/list-close.png"/>
 		</li>
 		<%
 		if (rs.getString("isPoint").equals("1")) {
 		%>
-		<li class="qlo-li qlo-<%=inputCount%>">
+		<li class="qlo-li qlo-<%=rs.getString("id")%>">
 			<%
 				for (int i = 1; i < 6; i++) {
 							if (rs.getString("question" + i) == null || rs.getString("question" + i).equals("")) {
@@ -365,10 +347,11 @@
 							}
 			%>
 			<div class="radio">
-				<label> <input type="radio"
-					name="qna-<%=inputCount%>-optionsRadios" id="optionsRadios5"
-					value="option5"><%=rs.getString("question" + i)%>
+				<label class="label-optionsRadios lor-<%=rs.getString("id")%>">
+					<input type="radio" class="qna-<%=rs.getString("id")%>-optionsRadios qna-num-options-<%=i%>" name="qna-<%=rs.getString("id")%>-optionsRadios" id="optionsRadios5-<%=i%>" value="option5">
+					<div class=""><%=rs.getString("question" + i)%></div>
 				</label>
+				<input type="text" class="form-control qna-inputRadios" name="qna-<%=rs.getString("id")%>-inputRadios" id="inputsRadios5" value="<%=rs.getString("question" + i)%>" >
 			</div> 
 			<% } %>
 		</li>
@@ -376,7 +359,7 @@
 		<%
 			if (rs.getString("isCheck").equals("1")) {
 		%>
-		<li class="qlo-li qlo-<%=inputCount%>">
+		<li class="qlo-li qlo-<%=rs.getString("id")%>">
 			<%
 				for (int i = 1; i < 6; i++) {
 							if (rs.getString("question" + i) == null
@@ -385,7 +368,7 @@
 							}
 			%> 
 		<label class="checkbox-inline"> 
-			<input name="qna-<%=inputCount%>-checkbox-1" type="checkbox" id="inlineCheckbox1" value="option1"><%=rs.getString("question" + i)%>
+			<input name="qna-<%=rs.getString("id")%>-checkbox-1 qna-num-options-<%=i%>" type="checkbox" id="inlineCheckbox1-<%=i%>" value="option1"><%=rs.getString("question" + i)%>
 		</label> <%
  	}
  %>
@@ -397,7 +380,7 @@
 		<%
 			if (rs.getString("isRadio").equals("1")) {
 		%>
-		<li class="qlo-li qlo-<%=inputCount%>">
+		<li class="qlo-li qlo-<%=rs.getString("id")%>">
 			<%
 				for (int i = 1; i < 6; i++) {
 							if (rs.getString("question" + i) == null
@@ -407,7 +390,7 @@
 			%>
 			<div class="radio">
 				<label> 
-					<input type="radio" name="qna-<%=inputCount%>-selectsRadios" id="optionsRadios1" value="option1" checked> <%=rs.getString("question" + i)%>
+					<input type="radio" name="qna-<%=rs.getString("id")%>-selectsRadios qna-num-options-<%=i%>" id="optionsRadios1-<%=i%>" value="option1" checked> <%=rs.getString("question" + i)%>
 				</label>
 			</div> <%
  	}
@@ -420,9 +403,9 @@
 		<%
 			if (rs.getString("isText").equals("1")) {
 		%>
-		<li class="qlo-li qlo-<%=inputCount%>">
+		<li class="qlo-li qlo-<%=rs.getString("id")%>">
 			<div class="col-sm-10">
-				<input name="qna-<%=inputCount%>-textinput" type="text" class="form-control" id="inputNumber" placeholder="Phone number">
+				<input name="qna-<%=rs.getString("id")%>-textinput" type="text" class="form-control" id="inputNumber" placeholder="Phone number">
 			</div>
 		</li>
 		<%
@@ -436,7 +419,7 @@
 			</div>
 		</li>
 	</ul>
-	<input type="hidden" name="qna-<%=inputCount%>-inputid" value="<%=rs.getString("id")%>" />
+	<input type="hidden" name="qna-<%=rs.getString("id")%>-inputid" value="<%=rs.getString("id")%>" />
 	<%
 		inputCount++;
 		}

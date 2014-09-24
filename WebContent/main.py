@@ -23,7 +23,7 @@ def Update(ApiKeyList):
     oldSet = set()
 
     while 1:
-        nameList = glob.glob('file/*')
+        nameList = glob.glob('AudioDatas/*')
 
         newSet = set()
 
@@ -54,7 +54,7 @@ def Update(ApiKeyList):
             else:
                 outputFile = inputFile[0:len(inputFile)-4]
                 print("convert : " + outputFile)
-                # convert(inputFile, outputFile + ".wav", ApiKeyList)
+                #convert(inputFile, outputFile + ".wav", ApiKeyList)
                 _thread.start_new_thread(convert,(inputFile, outputFile+".wav", ApiKeyList))
                 _thread.start_new_thread(convert,(inputFile, outputFile+".wav", ApiKeyList))
                 _thread.start_new_thread(convert,(inputFile, outputFile+".wav", ApiKeyList))

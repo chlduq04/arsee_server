@@ -10,8 +10,26 @@
 	margin-top: 50px;
 }
 
-.bt_login {
-	margin-top: 65px;
+.bt_login, .bt_logout {
+	margin-top: 60px;
+	font-size: 20px;
+	color: white;
+}
+
+.update_view_url {
+	margin-top: 60px;
+	font-size: 20px;
+	color: white;
+}
+
+.bt_update_view_url{
+	color:white;	
+	text-decoration: none;
+}
+
+.bt_update_view_url:hover{
+	color:white;	
+	text-decoration: none;
 }
 
 .main_left {
@@ -41,19 +59,19 @@
 	margin-top: 15px;
 }
 
-.ml_clickbox > a {
-	float:left;
-	position:relative;
+.ml_clickbox>a {
+	float: left;
+	position: relative;
 }
 
-.mc_clickbox > a {
-	float:left;
-	position:relative;
+.mc_clickbox>a {
+	float: left;
+	position: relative;
 }
 
-.mr_clickbox > a {
-	float:left;
-	position:relative;
+.mr_clickbox>a {
+	float: left;
+	position: relative;
 }
 
 .m_all_clickbt {
@@ -149,9 +167,9 @@ margin-left: 443px;
 }
 
 .ml_clickbox_img_over {
-	top:0;
-	left:0;
-	position:absolute;
+	top: 0;
+	left: 0;
+	position: absolute;
 	cursor: pointer;
 	width: 272px;
 	height: 218px;
@@ -161,9 +179,9 @@ margin-left: 443px;
 }
 
 .mc_clickbox_img_over {
-	top:0;
-	left:0;
-	position:absolute;
+	top: 0;
+	left: 0;
+	position: absolute;
 	cursor: pointer;
 	width: 272px;
 	height: 218px;
@@ -172,9 +190,9 @@ margin-left: 443px;
 }
 
 .mr_clickbox_img_over {
-	top:0;
-	left:0;
-	position:absolute;
+	top: 0;
+	left: 0;
+	position: absolute;
 	cursor: pointer;
 	width: 272px;
 	height: 218px;

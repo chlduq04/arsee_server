@@ -1,4 +1,5 @@
 var n, m, map_val, stack, yGroupMax, yStackMax, margin, x, y, color, xAxis, svg, layer, rect;
+var pressTimer;
 
 $( document ).ready(function() {
 	clickDelete();
@@ -7,17 +8,60 @@ $( document ).ready(function() {
 	clickTotalResult();
 	clickListOpen();
 	clickMakeList();
+	clickMouseLong();
 });
+
+function clickMouseLong(){
+	if(jQuery){
+		$.fn.extend({
+			bind_clk_long : function(func, timeout){
+				var pressTimer;
+				var target;
+				$(this).mouseup(function(){
+					clearTimeout(pressTimer);
+					return false;
+				}).mousedown(function(){
+					target = $(this);
+					pressTimer = window.setTimeout(function(){func(target)}, timeout);
+					return false; 
+				});	
+			}
+		})
+	}
+
+	$(".label-optionsRadios").bind_clk_long(function(e){
+		var target = e;
+		target.next().css({"display":"block"}).focus().focusout(function(){
+			target.next().css({"display":"none"});
+			target.css({"display":"block"}).find("div").html(target.next().val());
+		});
+		target.css({"display":"none"});
+	},500);
+}
+
 
 function clickMakeList(){
 	$(".qna-add-question").click(function(){
 		$(".qna-add-question").removeClass("active");
 		$(this).addClass("active")
-		$(".add-question-"+$(this).attr("class").match("type-.*")[0].replace(" active","")).find("a").trigger("click");
+		$(".add-question-"+$(this).attr("class").match("type-.*")[0].replace(" active", "")).find("a").trigger("click");
 	})
 }
 
 function clickListOpen(){
+	$(".qna-list-question").on("click",function(e){
+		var target = $(this).parent().find(".qlo-li");
+		if(target.css("display") == "none"){
+			$(this).find(".qna-list-open").css({"display":"none"});
+			$(this).find(".qna-list-close").css({"display":"block"});
+			target.css({"display":"block", "visibility":"visible"});
+		}else{
+			$(this).find(".qna-list-open").css({"display":"block"});
+			$(this).find(".qna-list-close").css({"display":"none"});
+			target.css({"display":"none", "visibility":"hidden"});
+		}
+	})
+
 	$(".qna-list-open").on("click",function(e){
 		var target = $(this).attr("class").match("qlo-.*");
 		var find = $(this).parent().parent().find("li."+target);
@@ -25,7 +69,7 @@ function clickListOpen(){
 		$(this).parent().find(".qna-list-close").css({"display":"block"});
 		find.css({"visibility":"visible", "display":"list-item"});
 	})
-	
+
 	$(".qna-list-close").on("click",function(e){
 		var target = $(this).attr("class").match("qlo-.*");
 		var find = $(this).parent().parent().find("li."+target);
@@ -33,7 +77,6 @@ function clickListOpen(){
 		$(this).parent().find(".qna-list-open").css({"display":"block"});
 		find.css({"visibility":"hidden", "display":"none"});
 	});
-	//
 }
 
 
@@ -119,7 +162,7 @@ function drawChart(data){
 	.on("mouseout",function(){
 		$(this).attr("fill", "#2d578b");
 	});
-	
+
 
 	barDemo.selectAll("text").
 	data(data).
@@ -134,7 +177,7 @@ function drawChart(data){
 	attr("fill", "white");
 
 	$("svg").css({"height":280});
-	
+
 	barDemo.selectAll("text.yAxis").
 	data(data).
 	enter().append("svg:text").

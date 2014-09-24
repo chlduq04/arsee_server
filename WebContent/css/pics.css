@@ -1,24 +1,38 @@
-.pics_main {
-	overflow: hidden;
+.pics_main_contents {
+	width: 884px;
 	height: 100%;
-	background-color: #ECFBFF;
-	padding: 25px;
-	margin-top: 100px;
+	margin: 0 auto;
+	padding: 15px;
+}
+
+.pics_main {
+	width: 100%;
+	height: 100%;
+	margin: 0 auto;
+	min-height: 954px;
+	overflow: hidden;
+	margin-top: 125px;
+	background-color: rgb(236, 240, 241);
+	position: relative;
 }
 
 .image_not_found {
-	width: 500px;
-	height: 50px;
+	width: 620px;
+	height: 150px;
 	margin: 0 auto;
 	text-align: center;
-	font-size: 40px;
+	font-size: 80px;
 	line-height: 50px;
+	font-family: fantasy;
+	margin-top: 200px;
+	overflow: hidden;
 }
 
 .uploadimages {
 	width: 600px;
 	margin: 0 auto;
 	display: block;
+	margin-bottom: 15px;
 }
 
 .uploadimage-rotate {
@@ -32,6 +46,18 @@
 	float: right;
 }
 
-.pics_list{
-	overflow:hidden;
+.uploadimage-title-rotate {
+	float: right;
+	margin-right: 10px;
+	line-height: 30px;
+	font-family: fantasy;
+	font-size: 15px;
+}
+
+.pics_list {
+	overflow: hidden;
+}
+
+.number_input_name {
+	width: 140px;
 }

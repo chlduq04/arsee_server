@@ -65,11 +65,13 @@ public class AudioManager extends AudioPage{
 			
 			while(true){
 				cout("파일 : '"+filename+"' 를 체크 중... "+checkcount);
-				updateStatusSender("파일 : '"+filename+"' 를 체크 중... "+checkcount);
+				updateStatusSender("File -> "+filename + " : " + checkcount + " Times");
 				if(checkcount > 20){
 					cout("파일 : '"+filename+"' 에 대한 정보 부족... ");
-					updateStatusSender("파일 : '"+filename+"' 에 대한 정보 부족... ");
+					updateStatusSender("File -> "+filename+" : fail ");
 					this.stop();
+					threadCount--;
+					break;
 				}
 				
 				if(file.exists()) { 
@@ -82,6 +84,7 @@ public class AudioManager extends AudioPage{
 					}
 					catch(Exception e){
 						System.out.println("del Thread");
+						threadCount--;
 					}
 					
 					System.out.println("parent : " + parent);
@@ -98,6 +101,8 @@ public class AudioManager extends AudioPage{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						this.stop();
+						threadCount--;
+						break;
 					}
 					this.stop();
 				}else{
@@ -107,7 +112,9 @@ public class AudioManager extends AudioPage{
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						threadCount--;
 						this.stop();
+						break;
 					}
 					checkcount++;
 				}
@@ -299,22 +306,17 @@ public class AudioManager extends AudioPage{
 		rt.exec("explorer.exe C:\\Download\\");
 		return true;
 	}
-
-	public boolean wavsToText() throws Exception{
-		sendToSpeech("olleh", "115", "0", "C:/APM_Setup/htdocs/ARSee_Server/WebContent/AudioDatas/001 (2).wav");
-		return true;
-	}
-
+	
 	public String sendToSpeech(String company, String number, String parent, String filepath) throws Exception{
 		try {
+			synchronized(Object.class){
 			System.out.println("Send Google STT...");
-			String USER_AGENT = "speech2text",
-					url = "https://www.google.com/speech-api/v2/recognize?output=json&lang=ko-kr&key=AIzaSyBHM1eZURbBRXHWvt7QvjZkxXXWFnKOws0&client=chromium";
-
-			URL obj;
-			obj = new URL(url);
+			String USER_AGENT = "speech2text",	url = "https://www.google.com/speech-api/v2/recognize?output=json&lang=ko-kr&key=AIzaSyBHM1eZURbBRXHWvt7QvjZkxXXWFnKOws0&client=chromium";
+			
+				
+			
+			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection(); 
-
 			// add reuqest header
 			con.setRequestMethod("POST");
 			con.setRequestProperty("User-Agent", USER_AGENT);
@@ -331,8 +333,7 @@ public class AudioManager extends AudioPage{
 			System.out.println("\nSending 'POST' request to URL : " + url);
 			System.out.println("Response Code : " + responseCode);
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					con.getInputStream(),"utf-8"));
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
 			String inputLine;
 			StringBuffer response = new StringBuffer();
 
@@ -346,7 +347,6 @@ public class AudioManager extends AudioPage{
 					decodedString = decodedString.substring(11, decodedString.length() - 33);
 					decodedString += "}";
 					cout(decodedString);
-					updateStatusSender(decodedString);
 					JSONParser parser=new JSONParser();
 					Object objj = parser.parse(decodedString);
 					JSONObject jobj = (JSONObject)objj;
@@ -360,14 +360,16 @@ public class AudioManager extends AudioPage{
 							depth = "0";
 						}
 						insertNumber(number, jobj.get("transcript").toString(), depth, parent, company);
+						updateStatusSender(i + " th word : " + jobj.get("transcript").toString());
 					}
 				}
 				checkResult = true;
 
 			}
 			in.close();
-
+			con.disconnect();
 			return response.toString();
+			}
 		} catch (MalformedURLException e) {
 			return "{}";
 		}
@@ -379,8 +381,16 @@ public class AudioManager extends AudioPage{
 			for(int i=0;i<Indexing.length;i++){
 				for(int j=0;j<Indexing[0].length;j++){
 					if(text.indexOf(Indexing[i][j]) != -1){
-						map.put(""+i, indexingNumber(map, text.split(Indexing[i][j])[0].trim()));
-						text = text.split(Indexing[i][j])[1].trim();
+						try{
+							map.put(""+i, indexingNumber(map, text.split(Indexing[i][j])[0].trim()));
+						}catch(Exception e){
+							map.put(""+i, indexingNumber(map, text));
+						}						
+						try{
+							text = text.split(Indexing[i][j])[1].trim();
+						}catch(Exception e){
+							text = "";
+						}
 						ch = true;
 					}
 				}
@@ -390,8 +400,17 @@ public class AudioManager extends AudioPage{
 					for(int i=0;i<SubIndexing.length;i++){
 						for(int j=0;j<SubIndexing[0].length;j++){
 							if(text.indexOf(SubIndexing[i][j]) != -1){
-								map.put(""+i, indexingNumber(map, text.split(SubIndexing[i][j])[0].trim()));
-								text = text.split(SubIndexing[i][j])[1].trim();
+								try{
+									map.put(""+i, indexingNumber(map, text.split(SubIndexing[i][j])[0].trim()));
+								}catch(Exception e){
+									map.put(""+i, indexingNumber(map, text));
+								}
+
+								try{
+									text = text.split(SubIndexing[i][j])[1].trim();
+								}catch(Exception e){
+									text = "";
+								}
 								ch = true;
 							}
 						}

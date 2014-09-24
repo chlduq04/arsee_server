@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 
 
+
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -242,6 +244,15 @@ public class ManagementHoliday extends Database{
 		return "수정 실패";
 	}
 	
+	public String duplicate(String number, String company) throws SQLException{
+		initializeDB();
+		String holiday_to_day = "INSERT INTO arsee_ars_infos (text, number, depth, indexs, parent,company, starttime, endtime, count,info,normal, error, star, sharp) "
+				+ "SELECT text, number, depth, indexs, parent,company, starttime, endtime, count,info,normal, error, star, sharp FROM arsee_ars_infos_holiday  "
+				+ "WHERE number = ? and company = ?";
+		makePstmtUpdate(holiday_to_day, number, company);
+		return "복사 완료";
+	}
+	
 	public int returnIndex(String argu){
 		for(int i=0;i<Indexing.length;i++){
 			for(int j=0;j<Indexing[0].length;j++){
@@ -251,6 +262,17 @@ public class ManagementHoliday extends Database{
 			}
 		}
 		return -1;
+	}
+	
+	public String findOthers(String number, String company, String depth, String index) throws SQLException{
+		initializeDB();
+		JSONObject result = new JSONObject();
+		String find_other_datas = "SELECT id, text, count FROM arsee_ars_infos_update_holiday WHERE company = ? and number = ? and depth = ? and indexs = ? order by count desc";
+		ResultSet rss = makePstmtExecute(find_other_datas, company, number, depth, index);
+		while(rss.next()){
+			result.put(rss.getString("id"), rss.getString("text")+ARS_DATA_SPLIT_KEY+rss.getString("count"));
+		}
+		return result.toJSONString();
 	}
 
 	public String indexingNumber(HashMap<String, String> map, String text){		
