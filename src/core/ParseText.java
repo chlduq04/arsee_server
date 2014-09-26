@@ -114,7 +114,7 @@ public class ParseText extends Database{
 	
 	
 	public String getDepthText(String arsnum, String depth, String parent, String company) throws SQLException{
-		String checkQuery = "SELECT * FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? AND depth = ? AND parent = ? AND company = ? AND starttime < now() AND endtime > now() order by depth, parent, indexs";
+		String checkQuery = "SELECT * FROM "+ARS_DBNAME_NOW_INFO+" WHERE number = ? AND depth = ? AND parent = ? AND company = ? AND starttime < now() AND endtime > now() AND indexs != 100 order by depth, parent, indexs";
 		JSONObject result = new JSONObject();
 		initializeDB();
 		ResultSet rss = makePstmtExecute(checkQuery, arsnum, depth, parent, company);
@@ -129,7 +129,7 @@ public class ParseText extends Database{
 		}
 		int dpt = Integer.parseInt(depth);
 		if(dpt > 0){
-			makePstmtUpdate("UPDATE "+ARS_DBNAME_NOW_INFO+" SET count = count + 1 WHERE number = ? AND company = ? AND depth = ? AND indexs = ?", arsnum, company, ""+(dpt-1), parent);			
+			makePstmtUpdate("UPDATE "+ARS_DBNAME_NOW_INFO+" SET count = count + 1 WHERE number = ? AND company = ? AND depth = ? AND indexs = ?", arsnum, company, ""+(dpt-1), ""+parent.charAt(parent.length()-1));			
 		}
 		return result.toJSONString();
 	}

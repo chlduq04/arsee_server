@@ -37,7 +37,7 @@ public class Database {
 	protected static String ARS_DBNAME_NOW_INFO_KEYWORD = ARS_DBNAME_DAY_INFO_KEYWORD;
 	
 	protected final static String AESKEY = "arseekeysetforsession";
-	protected final static boolean DEBUG_MODE = true;
+	protected final static boolean DEBUG_MODE = false;
 	protected final static String DB_DRIVER = "jdbc:mysql://localhost:3306/arsee";
 	protected final static String DB_USER= "root";
 	protected final static String DB_PWD= "ungdbdb";
