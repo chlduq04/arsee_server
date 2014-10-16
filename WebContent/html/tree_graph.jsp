@@ -33,10 +33,12 @@ label{
 		Grouped</label> <label><input type="radio" name="mode" value="stacked"
 		checked> Stacked</label>
 </form>
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="C:/APM_Setup/htdocs/arsee_server/WebContent/js/d3.js"></script>
 <script>
 var n, m, stack, yGroupMax, yStackMax, margin, x, y, color, xAxis, svg, layer, rect;
-drawGraph();
+setTimeout(100, function(){
+	drawGraph();
+});
 function drawGraph(){
 	n = 4, // number of layers
     m = 12, // number of samples per layer

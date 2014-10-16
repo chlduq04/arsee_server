@@ -1,4 +1,3 @@
-<%@page import="com.sun.org.apache.xpath.internal.operations.Bool"%>
 <%@page import="java.util.HashMap"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>

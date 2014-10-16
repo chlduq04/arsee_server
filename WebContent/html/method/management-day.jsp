@@ -56,6 +56,7 @@ if(func.equals("add_one")){
 }else if(func.equals("others")){
 	String depth = request.getParameter("n_depth");
 	String index = request.getParameter("n_indexs");
-	out.println(manage.findOthers(number, company, depth, index));	
+	String parent = request.getParameter("n_parent");
+	out.println(manage.findOthers(number, company, depth, index, parent));	
 }
 %>

@@ -29,6 +29,7 @@ $( document ).ready(function() {
 	clickSettingTitle();
 	clickSettingDetail();
 	checkOtherData();
+	console.log("새로운 분기 입니다. 상담원을 원하시면 1번, 문자로 하는 ARS로 돌아가시려면 2번을 눌러주세요");
 	
 	//analysis_data_tree();
 	setTimeout(function(){	
@@ -46,6 +47,9 @@ $( document ).ready(function() {
 				draw_svg();
 			}
 		})
+		
+		$(".company_input").val("olleh");
+		$(".number_input").val("114");
 	},10)
 });
 
@@ -891,8 +895,8 @@ function click_add_database(){
 			}else if(click_by_id["n_type"] == "star"){
 				click_by_id["n_indexs"] = "*"
 			}
-
 			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "mod" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
+			tag_add();
 		}else if(click_by_mode == "add"){
 			if($("#addition-idx").val() != "auto"){
 				click_by_id["n_text"] = $("#addition-text").val();
@@ -925,6 +929,7 @@ function click_add_database(){
 				}
 				postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "add_text" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
 			}
+			tag_add();
 		}else if(click_by_mode == "delete"){
 			jsondata = [];
 			aroundtree_to_json(click_by_root);
@@ -933,13 +938,25 @@ function click_add_database(){
 		}else if(click_by_mode == "mode"){
 			jsondata = [];
 			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "duplicate" }), click_by_id, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});
-		}else{
-			
 		}
 	}));
 
-	$("#set-det-submit").bind("click",checkClick(function(){
-		var inputs = $("#detail-pop").find("input");
+	$(".management-input-save").on("click",function(){
+		if($(this).is(".active")){
+			jsondata = [];
+			aroundtree_to_json(root);
+			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tree" }), {data : JSON.stringify(jsondata)}, null, function(s){
+				$("svg").remove();draw_svg();
+				$(".management-input-save").removeClass("active");
+			}, function(e){alert(e);});
+		}
+	});
+
+}
+
+function tag_add(){
+	if($(".tab-detail-open.display-none").length == 0){
+		var inputs = $(".maq-div-3").find("input");
 		var datadic = {};
 		var detail_new = [];
 		var detail_old = [];
@@ -960,19 +977,7 @@ function click_add_database(){
 		datadic["old"] = JSON.stringify(detail_old);
 
 		postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tags_insert" }), datadic, null, function(s){console.log(s.trim());$("svg").remove();draw_svg();click_by_id = {};}, function(e){alert(e);});		
-	}));
-	
-	$(".management-input-save").on("click",function(){
-		if($(this).is(".active")){
-			jsondata = [];
-			aroundtree_to_json(root);
-			postAjax(makeGetUrl("method/management-"+day_or_holiday+".jsp",{ number : find_number_ajax, company : find_company_ajax, func : "tree" }), {data : JSON.stringify(jsondata)}, null, function(s){
-				$("svg").remove();draw_svg();
-				$(".management-input-save").removeClass("active");
-			}, function(e){alert(e);});
-		}
-	});
-
+	}
 }
 
 function check_save_tree(){

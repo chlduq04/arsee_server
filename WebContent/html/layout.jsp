@@ -22,7 +22,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css">
+<link rel="stylesheet" href="<%=page_info.getCssUrl()%>bootstrap/bootstrap.css">
 <link rel="stylesheet" href="<%=page_info.getCssUrl()%>bootstrap/flat-ui.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="<%=page_info.getCssUrl()%>reset.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="<%=page_info.getCssUrl()%>layout.css" type="text/css" media="screen" />
@@ -52,15 +52,16 @@
 				<form id="top-com-num-change-form" action="layout.jsp?page=<%=nowPage%>" method="POST">
 					<%if(!nowPage.equals("pics")){%>
 					<div class="company_input_name">Company</div>
-					<input class="company_input" name="company"/>
+					<input class="company_input" name="company" value="olleh"/>
 					<%}%>
 
 					<%if(nowPage.equals("pics")){%>
 					<div class="number_input_name">Phone number</div>
+					<input class="number_input" name="number" value="01021861953"/>
 					<%}else{%>
 					<div class="number_input_name">ARS number</div>
+					<input class="number_input" name="number" value="114"/>
 					<%}%>
-					<input class="number_input" name="number"/>
 
 					<%if(nowPage.equals("management")){ %>
 					<div class="time_input_name">Time</div>

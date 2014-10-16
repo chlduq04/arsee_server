@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import com.mysql.jdbc.Driver;
 
 public class ImagePage extends Database{
-	protected String absolutepath = "C:/APM_Setup/htdocs/ARSee_Server/WebContent/ImageDatas/";	
+	protected String absolutepath = "C:/Users/swssm/workspace/ARSee_Server/WebContent/ImageDatas";	
 	protected String imagePath = "../ImageDatas/";
 	private String inputDate;
 	protected String getPathQuery = "Select path From arsee_image_paths Where phone = ?";

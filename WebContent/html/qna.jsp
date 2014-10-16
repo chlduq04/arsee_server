@@ -93,8 +93,7 @@
 									<div class="form-group">
 										<label for="inputQuestion" class="col-sm-2 control-label">Question?</label>
 										<div class="col-sm-10">
-											<input name="question" type="text" class="form-control"
-												id="inputQuestion" placeholder="Question">
+											<input name="question" type="text" class="form-control" id="inputQuestion" placeholder="Question" value="ARS 서비스에 대한 만족도를 골라 주세요">
 										</div>
 									</div>
 									<div class="form-group">
@@ -102,7 +101,7 @@
 											1</label>
 										<div class="col-sm-10">
 											<input name="check1" type="text" class="form-control"
-												id="inputcheck1" placeholder="Subscription">
+												id="inputcheck1" placeholder="Subscription" value="1">
 										</div>
 									</div>
 									<div class="form-group">
@@ -110,7 +109,7 @@
 											2</label>
 										<div class="col-sm-10">
 											<input name="check2" type="text" class="form-control"
-												id="inputcheck2" placeholder="Subscription">
+												id="inputcheck2" placeholder="Subscription" value="2">
 										</div>
 									</div>
 									<div class="form-group">
@@ -118,7 +117,7 @@
 											3</label>
 										<div class="col-sm-10">
 											<input name="check3" type="text" class="form-control"
-												id="inputcheck3" placeholder="Subscription">
+												id="inputcheck3" placeholder="Subscription" value="3">
 										</div>
 									</div>
 									<div class="form-group">
@@ -126,7 +125,7 @@
 											4</label>
 										<div class="col-sm-10">
 											<input name="check4" type="text" class="form-control"
-												id="inputcheck4" placeholder="Subscription">
+												id="inputcheck4" placeholder="Subscription" value="4">
 										</div>
 									</div>
 									<div class="form-group">
@@ -134,7 +133,7 @@
 											5</label>
 										<div class="col-sm-10">
 											<input name="check5" type="text" class="form-control"
-												id="inputcheck5" placeholder="Subscription">
+												id="inputcheck5" placeholder="Subscription" value="5">
 										</div>
 									</div>
 

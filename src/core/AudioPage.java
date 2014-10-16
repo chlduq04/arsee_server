@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import com.mysql.jdbc.Driver;
 
 public class AudioPage extends Database{
-	protected static String absolutepath = "C:/APM_Setup/htdocs/ARSee_Server/WebContent/AudioDatas/";	
+	protected static String absolutepath = "C:/APM_Setup/htdocs/arsee_server/WebContent/AudioDatas";	
 	protected static String imagePath = "../AudioDatas/";
 	private String inputDate;
 	protected String getPathQuery = "Select path From arsee_image_paths Where phone = ?";

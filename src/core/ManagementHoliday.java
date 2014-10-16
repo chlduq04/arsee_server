@@ -264,11 +264,11 @@ public class ManagementHoliday extends Database{
 		return -1;
 	}
 	
-	public String findOthers(String number, String company, String depth, String index) throws SQLException{
+	public String findOthers(String number, String company, String depth, String index, String parent) throws SQLException{
 		initializeDB();
 		JSONObject result = new JSONObject();
-		String find_other_datas = "SELECT id, text, count FROM arsee_ars_infos_update_holiday WHERE company = ? and number = ? and depth = ? and indexs = ? order by count desc";
-		ResultSet rss = makePstmtExecute(find_other_datas, company, number, depth, index);
+		String find_other_datas = "SELECT id, text, count FROM arsee_ars_infos_update_holiday WHERE company = ? and number = ? and depth = ? and indexs = ? and parent = ? order by count desc";
+		ResultSet rss = makePstmtExecute(find_other_datas, company, number, ""+(Integer.parseInt(depth)-1), index, parent);
 		while(rss.next()){
 			result.put(rss.getString("id"), rss.getString("text")+ARS_DATA_SPLIT_KEY+rss.getString("count"));
 		}
